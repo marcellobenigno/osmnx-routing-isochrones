@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="es" data-copy="Copiar">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSMnx Routing &amp; Isochrones — complemento de QGIS</title>
+<meta name="description" content="Descarga redes viales de OpenStreetMap y calcula rutas que respetan el sentido de las calles e isócronas localmente en QGIS, sin servicio web ni clave de API.">
+<meta property="og:title" content="OSMnx Routing &amp; Isochrones — complemento de QGIS">
+<meta property="og:description" content="Descarga redes viales de OpenStreetMap y calcula rutas que respetan el sentido de las calles e isócronas localmente en QGIS, sin servicio web ni clave de API.">
+<meta property="og:image" content="../assets/img/hero.png">
+<link rel="alternate" hreflang="en" href="../en/"><link rel="alternate" hreflang="pt-br" href="../pt-br/"><link rel="alternate" hreflang="es" href="../es/">
+<link rel="icon" href="../assets/icon.svg">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="topbar"><div class="wrap">
+  <a class="brand" href="#top"><img src="../assets/icon.svg" alt="">OSMnx Routing &amp; Isochrones</a>
+  <nav class="topnav"><a href="#features">Funciones</a><a href="#install">Instalación</a><a href="#quick-start">Inicio rápido</a><a href="#map-tools">Herramientas</a><a href="#algorithms">Algoritmos</a><a href="#isochrones">Isócronas</a><a href="#faq">Ayuda</a></nav>
+  <div class="lang"><a href="../en/" data-lang="en" class="" hreflang="en" title="English">EN</a><a href="../pt-br/" data-lang="pt-br" class="" hreflang="pt-br" title="Português">PT</a><a href="../es/" data-lang="es" class="on" hreflang="es" title="Español">ES</a></div>
+</div></header>
+
+<div class="hero" id="top"><div class="wrap">
+  <div>
+    <div class="badges"><span>QGIS 3.28+</span><span>Algoritmos de Procesos</span><span>Interfaz EN · PT-BR</span><span>GPL-2.0</span></div>
+    <h1>Rutas e isócronas de OpenStreetMap, dentro de QGIS</h1>
+    <p class="lead">Descarga una vez la red de calles de cualquier ciudad y calcula rutas que respetan el sentido de circulación y áreas de alcance en tu propio equipo — sin servicio de ruteo, sin clave de API, sin límites.</p>
+    <a class="btn primary" href="#install">⬇ Instalar el complemento</a>
+    <a class="btn ghost" href="https://github.com/marcellobenigno/osmnx-routing-isochrones">★ Código en GitHub</a>
+  </div>
+  <figure><img src="../assets/img/hero.png" alt="Isócronas en auto de 1, 2, 3 y 4 minutos en Cabedelo, Brasil" width="1200" height="900"></figure>
+</div></div>
+
+<section id="features"><div class="wrap">
+  <p class="kicker k-green">Por qué usarlo</p><h2>Todo se ejecuta localmente, en calles reales</h2>
+  <p class="intro">El complemento reúne OSMnx y NetworkX en cuatro algoritmos de Procesos y dos herramientas interactivas en el mapa.</p>
+  <div class="grid c4"><div class="card"><div class="ico t-green">🗺️</div><h4>Tu propia red</h4><p>Un clic convierte el nombre de un lugar en un GeoPackage con nodos, tramos, arcos dirigidos y el límite.</p></div><div class="card"><div class="ico t-red">↪️</div><h4>Respeta el sentido</h4><p>El auto sigue el sentido del tránsito. Un modo de comparación muestra los tramos que un grafo no dirigido recorrería a contramano.</p></div><div class="card"><div class="ico t-orange">⏱️</div><h4>Isócronas</h4><p>Áreas alcanzables en 5, 10, 15… minutos desde los puntos (o hacia ellos), con el tiempo de llegada en cada calle.</p></div><div class="card"><div class="ico t-blue">🖱️</div><h4>Clic en el mapa</h4><p>Paneles laterales dejan el mapa libre: marca puntos, desplaza, haz zoom y mira el resultado al instante.</p></div></div>
+</div></section>
+
+<section id="install"><div class="wrap">
+  <p class="kicker k-orange">Instalación</p><h2>Dos pasos, sin permisos de administrador</h2>
+  <p class="intro">QGIS ya incluye geopandas, networkx, shapely y pyproj; solo hay que añadir OSMnx al Python de QGIS.</p>
+  <ol class="steps"><li><h4>Instala OSMnx en el Python de QGIS</h4><p>Abre <b>Complementos → Consola de Python</b>, pega el código y pulsa Enter. Luego reinicia QGIS.</p><pre><code>from pip._internal.cli.main import main as pip
+pip([&quot;install&quot;, &quot;--user&quot;, &quot;--no-deps&quot;, &quot;osmnx&quot;])</code></pre></li><li><h4>Instala el complemento</h4><p><b>Complementos → Administrar e instalar complementos</b>, busca <b>OSMnx Routing &amp; Isochrones</b>. Mientras sea experimental, marca <i>Mostrar también complementos experimentales</i> en Configuración. También puedes usar <i>Instalar a partir de ZIP</i> con un archivo de las <a href='https://github.com/marcellobenigno/osmnx-routing-isochrones/releases'>releases</a>.</p></li></ol>
+  <div class="note warn">Si un error de importación menciona otro paquete faltante (QGIS antiguo en Linux), ejecuta el mismo comando sin <code>--no-deps</code>. Mientras falte una biblioteca, el complemento muestra un aviso con el botón <b>How to install</b> y sus algoritmos quedan desactivados.</div>
+</div></section>
+
+<section id="quick-start"><div class="wrap">
+  <p class="kicker k-blue">Inicio rápido</p><h2>Del nombre de un lugar al mapa en cuatro pasos</h2>
+  <p class="intro">Descarga la red una vez; todas las demás herramientas leen el GeoPackage.</p>
+  <div class="diagram" style="margin-bottom:22px"><svg viewBox="0 0 980 250" role="img" aria-label="workflow"><defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#888"/></marker></defs><rect x="10" y="93" width="150" height="64" rx="12" fill="#fff7e6" stroke="#f2b134" stroke-width="2"/><text x="85.0" y="121" text-anchor="middle" font-weight="700" font-size="15">Nombre del lugar</text><text x="85.0" y="141" text-anchor="middle" font-size="12" opacity=".75"></text><path d="M160 125 C180.0 125 180.0 125 200 125" fill="none" stroke="#888" stroke-width="3" marker-end="url(#ah)"/><rect x="200" y="93" width="150" height="64" rx="12" fill="#e3f4e6" stroke="#1a9641" stroke-width="2"/><text x="275.0" y="121" text-anchor="middle" font-weight="700" font-size="15">1. Descargar</text><text x="275.0" y="141" text-anchor="middle" font-size="12" opacity=".75">Nominatim + Overpass</text><path d="M350 125 C370.0 125 370.0 125 390 125" fill="none" stroke="#888" stroke-width="3" marker-end="url(#ah)"/><rect x="390" y="93" width="220" height="64" rx="12" fill="#ffffff" stroke="#5b636d" stroke-width="2"/><text x="500.0" y="121" text-anchor="middle" font-weight="700" font-size="15">GeoPackage</text><text x="500.0" y="141" text-anchor="middle" font-size="12" opacity=".75">nodos · tramos · arcos · límite</text><path d="M610 125 C645.0 125 645.0 45 680 45" fill="none" stroke="#2b83ba" stroke-width="3" marker-end="url(#ah)"/><rect x="680" y="13" width="290" height="64" rx="12" fill="#e4f0f8" stroke="#2b83ba" stroke-width="2"/><text x="825.0" y="41" text-anchor="middle" font-weight="700" font-size="15">2. Inspeccionar</text><text x="825.0" y="61" text-anchor="middle" font-size="12" opacity=".75">Informe HTML</text><path d="M610 125 C645.0 125 645.0 125 680 125" fill="none" stroke="#d62728" stroke-width="3" marker-end="url(#ah)"/><rect x="680" y="93" width="290" height="64" rx="12" fill="#fde8e8" stroke="#d62728" stroke-width="2"/><text x="825.0" y="121" text-anchor="middle" font-weight="700" font-size="15">3. Ruta más corta</text><text x="825.0" y="141" text-anchor="middle" font-size="12" opacity=".75">Ruta</text><path d="M610 125 C645.0 125 645.0 205 680 205" fill="none" stroke="#f28e2b" stroke-width="3" marker-end="url(#ah)"/><rect x="680" y="173" width="290" height="64" rx="12" fill="#fdf0e1" stroke="#f28e2b" stroke-width="2"/><text x="825.0" y="201" text-anchor="middle" font-weight="700" font-size="15">4. Isócronas</text><text x="825.0" y="221" text-anchor="middle" font-size="12" opacity=".75">Áreas de alcance</text></svg></div>
+  <ol class="steps"><li><h4>Descarga la red vial</h4><p>Caja de herramientas de Procesos (<code>Ctrl+Alt+T</code>) → <b>OSMnx Routing &amp; Isochrones → 1. Download road network</b>. Escribe, por ejemplo, <i>Cabedelo, Paraíba, Brasil</i>, elige <i>drive</i> y un archivo de salida.</p></li><li><h4>Revisa lo descargado (opcional)</h4><p><b>2. Inspect road network GeoPackage</b> genera un informe HTML: SRC, campos, completitud y un diagnóstico de ruteo.</p></li><li><h4>Marca una ruta</h4><p>Botón <b>Route on the map</b> de la barra: clic en el origen y luego en el destino.</p></li><li><h4>Marca isócronas</h4><p>Botón <b>Isochrones on the map</b>: cada clic agrega un punto y las áreas se recalculan.</p></li></ol>
+</div></section>
+
+<section id="map-tools"><div class="wrap">
+  <p class="kicker k-red">Herramientas en el mapa</p><h2>Clic en el mapa, con desplazamiento y zoom libres</h2>
+  <p class="intro">Ambas herramientas abren un panel lateral que nunca tapa el mapa. Un clic marca un punto, arrastrar desplaza, la rueda hace zoom, el botón derecho o <code>Esc</code> borra. El GeoPackage de la red se toma de las capas ya abiertas en el proyecto. <i>La interfaz del complemento está en inglés y portugués; las capturas muestran la versión en inglés.</i></p>
+  <h3><img class="inline-ico" src="../assets/route.svg" alt=""> Ruta en el mapa</h3>
+  <p>Primer clic = <b style='color:#1a9641'>origen</b>, segundo = <b style='color:#d62728'>destino</b>; la ruta se calcula al instante en segundo plano. <b>Swap</b> invierte el sentido; un tercer clic empieza un nuevo origen. Los clics quedan en la capa <i>Route points</i>.</p>
+  <figure class="shot"><img src="../assets/img/panel_route_en.png"
+    alt="Ruta en el mapa" loading="lazy">
+    <figcaption>El panel de ruta junto al mapa: distancia y tiempo aparecen en el panel.</figcaption></figure>
+  <h3><img class="inline-ico" src="../assets/isochrones.svg" alt=""> Isócronas en el mapa</h3>
+  <p>Cada clic agrega un punto (P1, P2…) a la capa <i>Isochrone points</i> y las isócronas se recalculan — desmarca <i>Calculate after each click</i> para marcar varios puntos antes. El panel lista el área de cada franja.</p>
+  <figure class="shot"><img src="../assets/img/panel_isochrones_en.png"
+    alt="Isócronas en el mapa" loading="lazy">
+    <figcaption>El panel de isócronas: tiempos, sentido, método y el área de cada franja. <span class="legend">cerca <span class="ramp iso"></span> lejos</span></figcaption></figure>
+  <div class="note tip">💡 Cada ejecución reemplaza el resultado anterior; marca <b>Keep previous results</b> para comparar escenarios.</div>
+</div></section>
+
+<section id="algorithms"><div class="wrap">
+  <p class="kicker k-blue">Referencia</p><h2>Los cuatro algoritmos de Procesos</h2>
+  <p class="intro">Funcionan en el diálogo, en <i>Ejecutar como proceso por lotes</i>, en el Modelador gráfico y desde Python.</p>
+  <div class="alg" style="--c:var(--green)"><h3><img src="../assets/icon.svg" alt="">1. Download road network (OSM)</h3><p class="id"><code>osmnx_routing:download_network</code></p><p>Geocodifica el lugar con Nominatim, descarga sus calles de Overpass y escribe un GeoPackage. Usa el proxy configurado en QGIS.</p><div class="table"><table><tr><th>Parámetro</th><th>Descripción</th></tr><tr><td><b>Place name</b></td><td>Municipio, distrito o barrio con estado y país, p. ej. <i>Campina Grande, Paraíba, Brasil</i>.</td></tr><tr><td><b>Network type</b></td><td><code>all</code>, <code>all_public</code>, <code>drive</code>, <code>drive_service</code>, <code>walk</code> o <code>bike</code>.</td></tr><tr><td><b>Output GeoPackage</b></td><td>Archivo a escribir. Una salida temporal se borra al cerrar QGIS — el registro lo advierte.</td></tr></table></div><p><b>Salidas:</b> Capas <code>edges</code> (visualización), <code>arcs</code> (un registro por sentido de circulación), <code>nodes</code> y <code>boundary</code>, con <code>speed_kph</code> y <code>travel_time</code>.</p></div><div class="alg" style="--c:var(--blue)"><h3><img src="../assets/icon.svg" alt="">2. Inspect road network GeoPackage</h3><p class="id"><code>osmnx_routing:inspect_network</code></p><p>Informe HTML de cada capa: SRC, geometría, extensión, campos con % completo, muestra y diagnóstico de ruteo. Solo necesita QGIS.</p><div class="table"><table><tr><th>Parámetro</th><th>Descripción</th></tr><tr><td><b>Road network GeoPackage</b></td><td>Cualquier GeoPackage; las capas pueden tener prefijo (<code>patos_nodes</code>…).</td></tr><tr><td><b>Report</b></td><td>Archivo HTML a escribir.</td></tr></table></div><p><b>Salidas:</b> Un informe HTML que se abre en el navegador.</p></div><div class="alg" style="--c:var(--red)"><h3><img src="../assets/route.svg" alt="">3. Shortest path (one-way aware)</h3><p class="id"><code>osmnx_routing:shortest_path</code></p><p>Ruta entre dos puntos en el grafo dirigido (auto) o ignorando el sentido (peatón).</p><div class="table"><table><tr><th>Parámetro</th><th>Descripción</th></tr><tr><td><b>Profile</b></td><td>Auto — respeta el sentido / Peatón — ignora el sentido.</td></tr><tr><td><b>Criterion</b></td><td>Menor distancia o más rápida (auto; usa <code>travel_time</code>).</td></tr><tr><td><b>Origin, Destination</b></td><td>Puntos en cualquier SRC; se ajustan al nodo más cercano del mayor componente conexo.</td></tr><tr><td><b>Ignore one-way streets</b></td><td>Comparación: permite ir a contramano y marca esos tramos.</td></tr><tr><td><b>Walking speed</b></td><td>km/h, por defecto 4,8.</td></tr></table></div><p><b>Salidas:</b> Líneas de la <b>Route</b> con orden, nombre de la calle, tipo de vía, sentido único, <code>wrong_way</code>, longitud, velocidad, tiempo y acumulados; <b>Route points</b>; números DISTANCE_KM, TIME_MIN, WRONG_WAY_M.</p></div><div class="alg" style="--c:var(--orange)"><h3><img src="../assets/isochrones.svg" alt="">4. Isochrones (reachable areas)</h3><p class="id"><code>osmnx_routing:isochrones</code></p><p>Polígonos de las áreas alcanzables en cada tiempo desde un punto marcado y/o una capa de puntos.</p><div class="table"><table><tr><th>Parámetro</th><th>Descripción</th></tr><tr><td><b>Point / Point layer</b></td><td>Un punto marcado, una capa (escuelas, centros de salud…) o ambos; el campo de nombre identifica cada punto.</td></tr><tr><td><b>One isochrone per point</b></td><td>Desmarcado = una cobertura combinada (cuenta el punto más cercano).</td></tr><tr><td><b>Direction (car)</b></td><td><i>Desde</i> los puntos (hasta dónde se llega) o <i>hacia</i> ellos (desde dónde se llega).</td></tr><tr><td><b>Times in minutes</b></td><td>p. ej. <code>5, 10, 15</code> (también <code>5;10;15</code>).</td></tr><tr><td><b>Polygon method</b></td><td>Franja alrededor de las calles alcanzadas (fiel) o envolvente cóncava (más suave).</td></tr><tr><td><b>Band width</b></td><td>Metros alrededor de las calles, por defecto 40.</td></tr></table></div><p><b>Salidas:</b> <b>Isochrones</b> (source, minutes, area_km2, roads_km), <b>Reached roads</b> con tiempo de llegada inicial/final, <b>Isochrone points</b>.</p></div>
+  <h3>El sentido de las calles cambia la ruta</h3>
+  <p>El ruteo en grafos no dirigidos suele ir a contramano sin avisar. El complemento guarda la capa dirigida <code>arcs</code> y el auto solo usa las calles en el sentido permitido.</p>
+  <div class="grid c2" style="align-items:center">
+    <div class="diagram"><svg viewBox="0 0 440 230" role="img" aria-label="arcs"><defs><marker id="a1a9641" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#1a9641"/></marker><marker id="ad62728" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#d62728"/></marker></defs><line x1="40" y1="70" x2="300" y2="70" stroke="#b9b4aa" stroke-width="16" stroke-linecap="round"/><circle cx="40" cy="70" r="9" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="300" cy="70" r="9" fill="#fff" stroke="#333" stroke-width="2"/><text x="170" y="40" text-anchor="middle" font-weight="700" font-size="15">calle doble sentido</text><line x1="70" y1="50" x2="270" y2="50" stroke="#1a9641" stroke-width="4" marker-end="url(#a1a9641)"/><line x1="270" y1="90" x2="70" y2="90" stroke="#1a9641" stroke-width="4" marker-end="url(#a1a9641)"/><text x="340" y="75" font-size="15" font-weight="700" fill="#1a9641">2 arcos</text><line x1="40" y1="180" x2="300" y2="180" stroke="#b9b4aa" stroke-width="16" stroke-linecap="round"/><circle cx="40" cy="180" r="9" fill="#fff" stroke="#333" stroke-width="2"/><circle cx="300" cy="180" r="9" fill="#fff" stroke="#333" stroke-width="2"/><text x="170" y="150" text-anchor="middle" font-weight="700" font-size="15">calle sentido único</text><line x1="70" y1="160" x2="270" y2="160" stroke="#d62728" stroke-width="4" marker-end="url(#ad62728)"/><text x="340" y="185" font-size="15" font-weight="700" fill="#d62728">1 arco</text></svg></div>
+    <div><p class="kicker k-red">Por qué importa el sentido</p><p>Cada arco es un sentido de circulación. El grafo del auto solo tiene arcos donde el tránsito puede pasar; el modo de comparación agrega los arcos inversos faltantes y los marca como <code>wrong_way</code>.</p>
+      <p><span class="legend"><span class="sw line" style="background:#d62728"></span>ruta</span><span class="legend"><span class="sw dash"></span>contramano</span><span class="legend"><span class="sw dot" style="background:#1a9641"></span>origen</span><span class="legend"><span class="sw dot" style="background:#d62728"></span>destino</span></p></div>
+  </div>
+  <figure class="shot"><img src="../assets/img/oneway.png" alt="one-way" loading="lazy">
+    <div class="pair"><div><b>Auto, respetando el sentido</b> — la ruta real es más larga.</div><div><b>Ignorando el sentido único</b> — más corta, pero el tramo negro punteado va a contramano.</div></div></figure>
+</div></section>
+
+<section id="isochrones"><div class="wrap">
+  <p class="kicker k-orange">Isócronas</p><h2>Mira quién está al alcance</h2>
+  <p class="intro">Desde un punto o cientos: área de influencia de escuelas, cobertura de centros de salud, zonas de reparto.</p>
+  <figure class="shot"><img src="../assets/img/coverage.png" alt="coverage" loading="lazy">
+    <figcaption>Isócronas a pie (5, 10, 15 min) de cuatro escuelas, una por punto. <span class="legend">cerca <span class="ramp iso"></span> lejos</span></figcaption></figure>
+  <figure class="shot"><img src="../assets/img/methods.png" alt="methods" loading="lazy">
+    <div class="pair"><div><b>Franja alrededor de las calles alcanzadas</b> — sigue la red; el último tramo se corta según el tiempo restante.</div><div><b>Envolvente cóncava</b> — formas más suaves para presentaciones.</div></div></figure>
+  <figure class="shot"><img src="../assets/img/reached_roads.png" alt="reached roads" loading="lazy">
+    <figcaption><b>Reached roads</b>: tiempo de llegada a pie en cada tramo de calle. <span class="legend">cerca <span class="ramp roads"></span> lejos</span></figcaption></figure>
+  <p class="kicker k-blue" style="margin-top:40px">Automatización</p><h2>Lotes, modelos y Python</h2>
+  <p class="intro">Cada algoritmo tiene un id estable; ejecútalo desde la consola de Python o tus scripts.</p>
+  <pre><code>import processing
+
+# 1. download once
+processing.run(&quot;osmnx_routing:download_network&quot;, {
+    &quot;PLACE&quot;: &quot;Cabedelo, Paraíba, Brazil&quot;, &quot;TYPE&quot;: 2,          # 2 = drive
+    &quot;OUTPUT&quot;: &quot;/data/cabedelo.gpkg&quot;})
+
+# 2. route (car, fastest)
+res = processing.run(&quot;osmnx_routing:shortest_path&quot;, {
+    &quot;NETWORK&quot;: &quot;/data/cabedelo.gpkg&quot;, &quot;PROFILE&quot;: 0, &quot;CRITERION&quot;: 1,
+    &quot;ORIGIN&quot;: &quot;-34.8410,-7.0323 [EPSG:4326]&quot;,
+    &quot;DESTINATION&quot;: &quot;-34.8417,-7.0371 [EPSG:4326]&quot;,
+    &quot;OUTPUT&quot;: &quot;TEMPORARY_OUTPUT&quot;})
+print(res[&quot;DISTANCE_KM&quot;], res[&quot;TIME_MIN&quot;])
+
+# 3. isochrones of a point layer, one per point
+processing.runAndLoadResults(&quot;osmnx_routing:isochrones&quot;, {
+    &quot;NETWORK&quot;: &quot;/data/cabedelo.gpkg&quot;, &quot;PROFILE&quot;: 1,           # 1 = pedestrian
+    &quot;POINTS&quot;: &quot;/data/schools.gpkg&quot;, &quot;ID_FIELD&quot;: &quot;name&quot;, &quot;SEPARATE&quot;: True,
+    &quot;MINUTES&quot;: &quot;5, 10, 15&quot;, &quot;OUTPUT&quot;: &quot;TEMPORARY_OUTPUT&quot;, &quot;ROADS&quot;: &quot;TEMPORARY_OUTPUT&quot;})</code></pre>
+</div></section>
+
+<section id="faq"><div class="wrap">
+  <p class="kicker k-red">Ayuda</p><h2>Solución de problemas</h2>
+  <details><summary>Los algoritmos están desactivados / “Missing Python libraries”</summary><div>OSMnx no está instalado en el Python de QGIS. Usa el comando de la sección Instalación y reinicia QGIS.</div></details><details><summary>“No result for …” o “no boundary polygon”</summary><div>Escribe el lugar como en OpenStreetMap, con estado y país. Los puntos de interés y las calles no tienen límite: usa un municipio, distrito o barrio.</div></details><details><summary>La descarga tarda o se agota el tiempo</summary><div>Las ciudades grandes tardan minutos. Si el servidor está ocupado (tiempo agotado / rechazado), espera unos minutos o prueba un lugar más pequeño. Revisa el proxy en Configuración → Opciones → Red.</div></details><details><summary>“… km from the road network”</summary><div>El punto está fuera del área descargada (a más de 5 km de cualquier calle). Marca dentro de la ciudad o descarga un lugar más grande.</div></details><details><summary>Guardé las capas en otro GeoPackage</summary><div>Funciona: los nombres con prefijo (<code>patos_nodes</code>…) se reconocen y las capas lon/lat que perdieron el SRC se toman como EPSG:4326. Mantén una red por GeoPackage.</div></details><details><summary>¿De dónde salen las velocidades?</summary><div>Del <code>maxspeed</code> de OSM cuando existe; si no, de un valor por tipo de vía (p. ej. residencial 30 km/h, primaria 60 km/h).</div></details>
+  <div class="note tip"><b>Para tener en cuenta.</b> No se modelan restricciones de giro, semáforos ni tránsito en tiempo real. La red se lee una vez por sesión de QGIS y queda en caché. Las rutas se ajustan al mayor componente fuertemente conexo, así que un clic en un callejón aislado igual da una ruta.</div>
+</div></section>
+
+<footer><div class="wrap">
+  <span>Datos © colaboradores de OpenStreetMap (ODbL). Figuras hechas con el complemento en Cabedelo, Paraíba, Brasil.</span>
+  <span>Complemento con licencia GPL-2.0-or-later. · <a href="https://github.com/marcellobenigno/osmnx-routing-isochrones">GitHub</a> · <a href="https://github.com/marcellobenigno/osmnx-routing-isochrones/issues">Issues</a></span>
+</div></footer>
+<script src="../assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OSMnx Routing &amp; Isochrones — QGIS plugin</title>
+<link rel="icon" href="assets/icon.svg">
+<link rel="stylesheet" href="assets/style.css">
+<script>
+(function () {
+  var langs = ["en", "pt-br", "es"], pick = null;
+  try { pick = localStorage.getItem("osmnx-doc-lang"); } catch (e) {}
+  if (langs.indexOf(pick) < 0) {
+    var nav = (navigator.languages || [navigator.language || "en"]).map(function (l) {
+      return l.toLowerCase(); });
+    pick = "en";
+    for (var i = 0; i < nav.length; i++) {
+      if (nav[i].indexOf("pt") === 0) { pick = "pt-br"; break; }
+      if (nav[i].indexOf("es") === 0) { pick = "es"; break; }
+      if (nav[i].indexOf("en") === 0) { pick = "en"; break; }
+    }
+  }
+  location.replace(pick + "/");
+})();
+</script>
+</head>
+<body>
+<div class="hero"><div class="wrap" style="grid-template-columns:1fr">
+  <div><h1>OSMnx Routing &amp; Isochrones</h1>
+  <p class="lead">Documentation · Documentação · Documentación</p>
+  <a class="btn primary" href="en/">English</a>
+  <a class="btn primary" href="pt-br/">Português</a>
+  <a class="btn primary" href="es/">Español</a></div>
+</div></div>
+</body>
+</html>
