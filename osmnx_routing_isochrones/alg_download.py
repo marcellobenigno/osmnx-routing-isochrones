@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import os
 import re
 import unicodedata
 
 from qgis.core import (QgsProcessingParameterString, QgsProcessingParameterEnum,
                        QgsProcessingParameterFileDestination, QgsProcessingOutputNumber,
-                       QgsProcessingContext, QgsProcessingException, QgsVectorLayer)
+                       QgsProcessingContext, QgsProcessingException, QgsVectorLayer,
+                       QgsProcessingUtils)
 
 from .base import AlgorithmBase, import_core
 from .compat import tr
@@ -38,6 +40,12 @@ def qgis_proxies():
     auth = f"{quote(user, safe='')}:{quote(pwd, safe='')}@" if user else ""
     url = f"http://{auth}{host}:{port}" if port else f"http://{auth}{host}"
     return {"http": url, "https": url}
+
+
+def is_temporary(path):
+    """True for files in the Processing temporary folder (TEMPORARY_OUTPUT)."""
+    tmp = os.path.normcase(os.path.realpath(QgsProcessingUtils.tempFolder()))
+    return os.path.normcase(os.path.realpath(path)).startswith(tmp + os.sep)
 
 
 def _slug(text):
@@ -111,4 +119,10 @@ class DownloadNetwork(AlgorithmBase):
                                                                 self.OUTPUT))
         feedback.pushInfo(tr("The 'arcs' layer overlaps 'edges' on the map; switch it off if "
                              "you prefer."))
+        if is_temporary(path):
+            feedback.pushWarning(tr(
+                "The network was saved to a TEMPORARY file, deleted when QGIS closes: {path}\n"
+                "To keep it, run again choosing an 'Output GeoPackage' file, or copy that file. "
+                "Use the GeoPackage itself in the other algorithms (its layers already have "
+                "the right names and CRS).").format(path=path))
         return {self.OUTPUT: path, "NODES": res["nodes"], "ARCS": res["arcs"]}

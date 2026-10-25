@@ -33,14 +33,13 @@ QGIS already ships geopandas, networkx, shapely, pyproj and pandas, so only `osm
 Open *Plugins → Python Console* and run:
 
 ```python
-import os, sys, subprocess
-py = os.path.join(sys.prefix, "python.exe") if os.name == "nt" else sys.executable
-print(subprocess.run([py, "-m", "pip", "install", "--user", "--no-deps", "osmnx"],
-                     capture_output=True, text=True).stdout)
+from pip._internal.cli.main import main as pip
+pip(["install", "--user", "--no-deps", "osmnx"])
 ```
 
 Restart QGIS. If an import error mentions another missing package, run the same command
-without `--no-deps`.
+without `--no-deps`. While a library is missing the plugin shows a warning at start-up
+(with a *How to install* button) and its algorithms stay disabled, except the inspection.
 
 **2. Install the plugin**: *Plugins → Manage and Install Plugins*, search for
 **OSMnx Routing & Isochrones** (tick *Show also experimental plugins* while it is
@@ -51,9 +50,12 @@ experimental), or *Install from ZIP* with a file from the
 
 1. Open the Processing Toolbox (`Ctrl+Alt+T`) → **OSMnx Routing & Isochrones**.
 2. **Download road network**: e.g. `João Pessoa, Paraíba, Brazil`, type `drive`.
-3. **Shortest path**: choose the GeoPackage, click the **…** buttons to pick origin and
-   destination on the map. Run it again with *Ignore one-way streets* to see what an
-   undirected graph would get wrong.
+3. **Route on the map** (toolbar button or *Vector → OSMnx Routing & Isochrones*): a side
+   panel stays open while you click the **origin** and then the **destination** on the map;
+   the route is calculated at once. Drag to pan and use the wheel to zoom between the
+   clicks; right click or `Esc` clears; *Swap* reverses the route. Tick *Ignore one-way
+   streets* to see what an undirected graph would get wrong. The same calculation is the
+   **Shortest path** algorithm, for batch runs, models and scripts.
 4. **Isochrones**: choose a point (or a point layer), times `5, 10, 15`.
 
 All algorithms work in *Run as Batch Process* and in the Graphical Modeler, and from Python:

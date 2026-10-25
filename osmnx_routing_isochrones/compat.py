@@ -40,6 +40,7 @@ WKB_MULTIPOLYGON = _first((Qgis, "WkbType", "MultiPolygon"), (QgsWkbTypes, "Mult
 FAST_INSERT = _first((QgsFeatureSink, "Flag", "FastInsert"), (QgsFeatureSink, "FastInsert"))
 NO_GEOMETRY = _first((Qgis, "FeatureRequestFlag", "NoGeometry"),
                      (QgsFeatureRequest, "NoGeometry"))
+MSG_WARNING = _first((Qgis, "MessageLevel", "Warning"), (Qgis, "Warning"))
 
 
 def field(name, kind):

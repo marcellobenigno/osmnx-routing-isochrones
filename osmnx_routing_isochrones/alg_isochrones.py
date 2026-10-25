@@ -6,7 +6,8 @@ from qgis.core import (QgsProcessingParameterFile, QgsProcessingParameterEnum,
                        QgsProcessingParameterField, QgsProcessingParameterBoolean,
                        QgsProcessingParameterString, QgsProcessingParameterNumber,
                        QgsProcessingParameterFeatureSink, QgsProcessingException,
-                       QgsCoordinateTransform, QgsFields, QgsFeature, QgsGeometry)
+                       QgsCoordinateTransform, QgsFields, QgsFeature, QgsGeometry,
+                       QgsCsException, QgsProcessingMultiStepFeedback)
 
 from .base import (AlgorithmBase, import_core, apply_style, IsochroneStyle,
                    ReachedRoadsStyle)
@@ -81,21 +82,32 @@ class Isochrones(AlgorithmBase):
         self.addParameter(QgsProcessingParameterFeatureSink(
             self.ROADS, tr("Reached roads"), SOURCE_LINE, optional=True, createByDefault=True))
 
-    def _points(self, parameters, context):
+    def _points(self, parameters, context, feedback):
         points = []
         if parameters.get(self.POINT):
             p = self.parameterAsPoint(parameters, self.POINT, context, WGS84)
             points.append((tr("clicked point"), p.y(), p.x()))
         source = self.parameterAsSource(parameters, self.POINTS, context)
         if source is not None:
+            if not source.sourceCrs().isValid():
+                raise QgsProcessingException(tr(
+                    "The point layer has no valid coordinate reference system (CRS). Set it in "
+                    "Layer Properties > Source and run again."))
             id_field = self.parameterAsString(parameters, self.ID_FIELD, context)
             xform = QgsCoordinateTransform(source.sourceCrs(), WGS84, context.transformContext())
             for f in source.getFeatures():
+                if feedback.isCanceled():
+                    break
                 g = f.geometry()
-                if g.isNull():
+                if g.isNull() or g.isEmpty():
                     continue
                 g = QgsGeometry(g)
-                g.transform(xform)
+                try:
+                    g.transform(xform)
+                except QgsCsException:
+                    feedback.pushWarning(tr("Point fid {fid} skipped: it could not be converted "
+                                            "to WGS84.").format(fid=f.id()))
+                    continue
                 pt = g.centroid().asPoint()
                 label = str(f[id_field]) if id_field else f"fid {f.id()}"
                 points.append((label, pt.y(), pt.x()))
@@ -116,7 +128,7 @@ class Isochrones(AlgorithmBase):
         except ValueError:
             raise QgsProcessingException(
                 tr("Invalid times: '{text}'. Use e.g. 5, 10, 15").format(text=text))
-        points = self._points(parameters, context)
+        points = self._points(parameters, context, feedback)
         if not points:
             raise QgsProcessingException(tr("Give a point on the map and/or a point layer."))
         if profile == "walk" and direction == "to":
@@ -126,14 +138,18 @@ class Isochrones(AlgorithmBase):
             n=len(points), times=sorted(set(minutes)), profile=profile,
             direction=direction, method=method))
 
+        steps = QgsProcessingMultiStepFeedback(3, feedback)    # load, compute, write
         try:
-            net = core.load_network(gpkg, feedback)
+            net = core.load_network(gpkg, steps)
+            steps.setCurrentStep(1)
             polys, roads = core.isochrones(net, points, minutes, profile, direction, walk,
-                                           method, buffer_m, separate, feedback)
+                                           method, buffer_m, separate, steps)
         except core.Canceled:
             return {}
         except ValueError as err:
             raise QgsProcessingException(str(err))
+        steps.setCurrentStep(2)
+        total = max(len(polys) + len(roads), 1)
 
         fields = QgsFields()
         for name, kind in (("source", "str"), ("minutes", "double"), ("area_km2", "double"),
@@ -141,7 +157,10 @@ class Isochrones(AlgorithmBase):
             fields.append(field(name, kind))
         sink, dest_id = self.parameterAsSink(parameters, self.OUTPUT, context, fields,
                                              WKB_MULTIPOLYGON, WGS84)
-        for p in polys:
+        for i, p in enumerate(polys):
+            if feedback.isCanceled():
+                break
+            steps.setProgress(100 * i / total)
             f = QgsFeature(fields)
             g = QgsGeometry.fromWkt(p["geometry"].wkt)
             g.convertToMultiType()
@@ -162,7 +181,11 @@ class Isochrones(AlgorithmBase):
             sink_r, roads_id = self.parameterAsSink(parameters, self.ROADS, context, rf,
                                                     WKB_LINESTRING, WGS84)
             if sink_r is not None:
-                for r in roads:
+                for i, r in enumerate(roads):
+                    if feedback.isCanceled():
+                        break
+                    if i % 1000 == 0:
+                        steps.setProgress(100 * (len(polys) + i) / total)
                     f = QgsFeature(rf)
                     f.setGeometry(QgsGeometry.fromWkt(r["geometry"].wkt))
                     f.setAttributes([str(r["source"]), round(r["t_start_min"], 2),

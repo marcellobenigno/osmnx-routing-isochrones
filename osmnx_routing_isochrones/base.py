@@ -11,33 +11,44 @@ from qgis.core import (QgsProcessingAlgorithm, QgsProcessingException,
                        QgsGraduatedSymbolRenderer, QgsStyle, QgsClassificationEqualInterval)
 
 from .compat import tr
+from . import deps
 
 FOLDER = os.path.dirname(__file__)
 
-INSTALL_HELP = (
-    "import os, sys, subprocess\n"
-    "subprocess.run([os.path.join(sys.prefix, 'python.exe'), '-m', 'pip', 'install', "
-    "'--user', '--no-deps', 'osmnx'])")
+
+def install_message(missing):
+    """How to install the missing Python libraries, shown in the dialog and the message bar."""
+    return tr("Missing Python libraries: {modules}.\n\nInstall OSMnx into QGIS's Python from "
+              "the Python Console (Plugins > Python Console), then restart QGIS:\n\n{code}\n\n"
+              "If geopandas or networkx are also missing, run the same command without "
+              "'--no-deps'.").format(modules=", ".join(missing), code=deps.INSTALL_HELP)
 
 
 def import_core():
-    """Imports the core only when an algorithm runs, with a clear message if OSMnx is missing."""
+    """Imports the core only when an algorithm runs, with a clear message if OSMnx is missing
+    (also for processing.run() and batch runs, which do not call canExecute)."""
+    missing = deps.missing_modules()
+    if missing:
+        raise QgsProcessingException(install_message(missing))
     try:
         from . import core
-        return core
     except ImportError as err:
-        raise QgsProcessingException(
-            tr("Missing library: {error}.\n\nInstall OSMnx into QGIS's Python from the Python "
-               "Console (Plugins > Python Console), then restart QGIS:\n\n{code}\n\n"
-               "On macOS/Linux use sys.executable instead of python.exe.")
-            .format(error=err, code=INSTALL_HELP))
+        raise QgsProcessingException(install_message([getattr(err, "name", None) or str(err)]))
+    core.keep_proj_context()            # runs in the Processing worker thread
+    return core
 
 
 class AlgorithmBase(QgsProcessingAlgorithm):
     _name = ""
+    _needs_core = True                  # False: runs with QGIS alone (no OSMnx needed)
 
     def tr(self, text):
         return tr(text)
+
+    def canExecute(self):
+        """Disables the Run button (with the install instructions) when libraries are missing."""
+        missing = deps.missing_modules() if self._needs_core else []
+        return (False, install_message(missing)) if missing else (True, "")
 
     def createInstance(self):
         return type(self)()

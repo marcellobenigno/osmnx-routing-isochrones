@@ -19,6 +19,14 @@ jobs:
           pip install flake8 pytest osmnx
       - name: Lint
         run: flake8 --max-line-length 110 osmnx_routing_isochrones scripts tests
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"         # oldest Python shipped with QGIS 3.28
+      - name: Syntax check on Python 3.9
+        run: python -m compileall -q osmnx_routing_isochrones
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Translations complete and compile
         run: python scripts/build_translations.py
       - name: Core tests (no QGIS)
@@ -41,7 +49,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Install osmnx next to QGIS's own packages
         run: |
-          python3 -m venv --system-site-packages /opt/venv
+          # some images (e.g. release-3_34, Ubuntu 22.04) ship Python without ensurepip
+          if ! python3 -m venv --system-site-packages /opt/venv; then
+            apt-get update -q && apt-get install -y -q python3-venv
+            rm -rf /opt/venv && python3 -m venv --system-site-packages /opt/venv
+          fi
           /opt/venv/bin/pip install -q osmnx pytest
       - name: Algorithm tests in QGIS
         run: /opt/venv/bin/python -m pytest -v tests

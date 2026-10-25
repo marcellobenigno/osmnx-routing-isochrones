@@ -22,7 +22,7 @@ from qgis.core import (QgsApplication, QgsProject, QgsVectorLayer, QgsFeature, Q
                        QgsProcessingOutputLayerDefinition, QgsProcessingUtils, QgsWkbTypes,
                        QgsCategorizedSymbolRenderer, QgsGraduatedSymbolRenderer, QgsSettings)
 
-APP = QgsApplication([], False)
+APP = QgsApplication([], True)          # GUI enabled (offscreen) for the route panel tests
 APP.initQgis()
 for p in ("/usr/share/qgis/python/plugins",
           os.path.join(QgsApplication.pkgDataPath(), "python", "plugins")):
@@ -239,6 +239,128 @@ def test_download_unreachable_server_gives_clear_message(tmp_path):
                 s.remove(k)
             else:
                 s.setValue(k, v)
+
+
+def test_algorithms_disabled_when_libraries_are_missing(monkeypatch, network, tmp_path):
+    """Without OSMnx the Run button is disabled with install instructions; the inspection,
+    which only needs QGIS, keeps working."""
+    from qgis.core import QgsProcessingException
+    from osmnx_routing_isochrones import deps
+    reg = QgsApplication.processingRegistry()
+    assert reg.algorithmById("osmnx_routing:isochrones").canExecute()[0]
+    monkeypatch.setattr(deps, "REQUIRED", ("osmnx", "no_such_module_xyz"))
+    for alg_id in ("download_network", "shortest_path", "isochrones"):
+        ok, msg = reg.algorithmById(f"osmnx_routing:{alg_id}").canExecute()
+        assert not ok and "no_such_module_xyz" in msg and "pip" in msg
+    assert reg.algorithmById("osmnx_routing:inspect_network").canExecute() == (True, "")
+    with pytest.raises(QgsProcessingException):
+        run("isochrones", {"NETWORK": network, "POINT": pt(3, 3), "MINUTES": "1"})
+    res, _ = run("inspect_network", {"INPUT": network, "OUTPUT": str(tmp_path / "r.html")})
+    assert os.path.exists(res["OUTPUT"])
+
+
+def test_plugin_start_up_reports_missing_libraries(monkeypatch):
+    from osmnx_routing_isochrones import deps
+    from osmnx_routing_isochrones.osmnx_routing_isochrones import OsmnxRoutingPlugin
+    plugin = OsmnxRoutingPlugin(None)
+    try:
+        assert plugin.check_dependencies() == []
+        monkeypatch.setattr(deps, "REQUIRED", ("osmnx", "no_such_module_xyz"))
+        assert plugin.check_dependencies() == ["no_such_module_xyz"]
+    finally:
+        if plugin.translator:
+            from qgis.PyQt.QtCore import QCoreApplication
+            QCoreApplication.removeTranslator(plugin.translator)
+
+
+def test_projected_network_geopackage(network, tmp_path):
+    """A network re-saved in a metric CRS (UTM) gives the same route as the original."""
+    import geopandas as gpd
+    utm = str(tmp_path / "utm.gpkg")
+    for layer in core.list_layers(network):
+        gpd.read_file(network, layer=layer).to_crs("EPSG:31985").to_file(
+            utm, layer=layer, driver="GPKG")
+    params = {"PROFILE": 0, "CRITERION": 0, "ORIGIN": pt(2, 1), "DESTINATION": pt(2, 0)}
+    a, _ = run("shortest_path", dict(params, NETWORK=network))
+    b, layers = run("shortest_path", dict(params, NETWORK=utm), load=["OUTPUT"])
+    assert b["DISTANCE_KM"] == pytest.approx(a["DISTANCE_KM"], rel=1e-3)
+    assert layers["OUTPUT"].crs().authid() == "EPSG:4326"
+
+
+def test_clear_errors_for_bad_network_and_far_points(network, tmp_path):
+    from qgis.core import QgsProcessingException
+    with pytest.raises(QgsProcessingException, match="km from the road network"):
+        run("shortest_path", {"NETWORK": network, "ORIGIN": "-34.88,-6.0 [EPSG:4326]",
+                              "DESTINATION": pt(3, 3)})
+    bad = tmp_path / "bad.gpkg"
+    bad.write_text("not a geopackage")
+    with pytest.raises(QgsProcessingException, match="Could not open"):
+        run("shortest_path", {"NETWORK": str(bad), "ORIGIN": pt(2, 1), "DESTINATION": pt(2, 0)})
+
+
+def test_point_layer_without_crs_raises(network):
+    from qgis.core import QgsProcessingException
+    from qgis.core import QgsCoordinateReferenceSystem
+    lyr = QgsVectorLayer("Point?field=name:string", "no_crs", "memory")
+    lyr.setCrs(QgsCoordinateReferenceSystem())
+    f = QgsFeature(lyr.fields())
+    lat, lon = S.latlon(3, 3)
+    f.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(lon, lat)))
+    lyr.dataProvider().addFeatures([f])
+    QgsProject.instance().addMapLayer(lyr)
+    try:
+        assert not lyr.crs().isValid()
+        with pytest.raises(QgsProcessingException, match="coordinate reference system"):
+            run("isochrones", {"NETWORK": network, "POINTS": lyr.id(), "MINUTES": "1"})
+    finally:
+        QgsProject.instance().removeMapLayer(lyr.id())
+
+
+def test_prefixed_layers_without_crs_work_in_qgis(network, tmp_path):
+    """Layers saved from the project (patos_nodes...) into a new GeoPackage, CRS lost."""
+    import geopandas as gpd
+    copy = str(tmp_path / "patos.gpkg")
+    for layer in ("nodes", "edges", "arcs"):
+        gdf = gpd.read_file(network, layer=layer).set_crs(None, allow_override=True)
+        gdf.to_file(copy, layer=f"patos_{layer}", driver="GPKG")
+    res, _ = run("shortest_path", {"NETWORK": copy, "PROFILE": 0, "CRITERION": 0,
+                                   "ORIGIN": pt(2, 1), "DESTINATION": pt(2, 0)})
+    assert res["DISTANCE_KM"] == pytest.approx(0.333, abs=0.001)
+    out = str(tmp_path / "report.html")
+    html = open(run("inspect_network", {"INPUT": copy, "OUTPUT": out})[0]["OUTPUT"],
+                encoding="utf-8").read()
+    assert "patos_arcs" in html and "Missing layers" not in html and "No CRS" in html
+
+
+def test_temporary_download_path_is_detected(tmp_path):
+    from qgis.core import QgsProcessingUtils
+    from osmnx_routing_isochrones.alg_download import is_temporary
+    assert is_temporary(os.path.join(QgsProcessingUtils.tempFolder(), "abc", "OUTPUT.gpkg"))
+    assert not is_temporary(str(tmp_path / "net.gpkg"))
+
+
+def test_error_messages_in_portuguese(network, tmp_path):
+    from qgis.core import QgsProcessingException
+    from qgis.PyQt.QtCore import QCoreApplication
+    from osmnx_routing_isochrones.osmnx_routing_isochrones import OsmnxRoutingPlugin
+    s = QgsSettings()
+    old = (s.value("locale/overrideFlag"), s.value("locale/userLocale"))
+    s.setValue("locale/overrideFlag", True)
+    s.setValue("locale/userLocale", "pt_BR")
+    plugin = OsmnxRoutingPlugin(None)
+    try:
+        bad = tmp_path / "bad.gpkg"
+        bad.write_text("x")
+        with pytest.raises(QgsProcessingException, match="Não foi possível abrir"):
+            run("shortest_path", {"NETWORK": str(bad), "ORIGIN": pt(2, 1),
+                                  "DESTINATION": pt(2, 0)})
+        with pytest.raises(QgsProcessingException, match="da malha viária"):
+            run("shortest_path", {"NETWORK": network, "ORIGIN": "-34.88,-6.0 [EPSG:4326]",
+                                  "DESTINATION": pt(3, 3)})
+    finally:
+        QCoreApplication.removeTranslator(plugin.translator)
+        s.setValue("locale/overrideFlag", old[0] if old[0] is not None else False)
+        s.setValue("locale/userLocale", old[1] or "")
 
 
 @pytest.mark.skipif(os.environ.get("OSMNX_ONLINE") != "1", reason="needs internet")

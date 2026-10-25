@@ -3,7 +3,7 @@ from qgis.core import (QgsProcessingParameterFile, QgsProcessingParameterEnum,
                        QgsProcessingParameterPoint, QgsProcessingParameterBoolean,
                        QgsProcessingParameterNumber, QgsProcessingParameterFeatureSink,
                        QgsProcessingOutputNumber, QgsProcessingException, QgsFields,
-                       QgsFeature, QgsGeometry)
+                       QgsFeature, QgsGeometry, QgsProcessingMultiStepFeedback)
 
 from .base import AlgorithmBase, import_core, apply_style, RouteStyle
 from .compat import (tr, field, WGS84, NUMBER_DOUBLE, SOURCE_LINE, WKB_LINESTRING,
@@ -72,14 +72,17 @@ class ShortestPath(AlgorithmBase):
         if profile == "walk" and criterion == "time":
             feedback.pushInfo(tr("Pedestrian: shortest and fastest routes are the same."))
 
+        steps = QgsProcessingMultiStepFeedback(3, feedback)    # load, route, write
         try:
-            net = core.load_network(gpkg, feedback)
+            net = core.load_network(gpkg, steps)
+            steps.setCurrentStep(1)
             gdf, s = core.route(net, (po.y(), po.x()), (pd_.y(), pd_.x()),
                                 profile, criterion, ignore, walk)
         except core.Canceled:
             return {}
         except ValueError as err:
             raise QgsProcessingException(str(err))
+        steps.setCurrentStep(2)
 
         fields = QgsFields()
         for name, kind in (("order", "int"), ("name", "str"), ("highway", "str"),
@@ -91,6 +94,9 @@ class ShortestPath(AlgorithmBase):
                                              WKB_LINESTRING, WGS84)
         cum_m = cum_s = 0.0
         for i, (_, t) in enumerate(gdf.iterrows(), start=1):
+            if feedback.isCanceled():
+                break
+            steps.setProgress(100 * i / len(gdf))
             cum_m += float(t["length"])
             cum_s += float(t["travel_time"])
             f = QgsFeature(fields)

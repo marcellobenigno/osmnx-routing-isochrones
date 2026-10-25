@@ -8,6 +8,14 @@
         <translation>camada '{layer}' (dirigida)</translation>
     </message>
     <message>
+        <source>'{layer}' layer is in {crs}: reprojecting to EPSG:4326.</source>
+        <translation>A camada '{layer}' está em {crs}: reprojetando para EPSG:4326.</translation>
+    </message>
+    <message>
+        <source>'{place}' was found, but OpenStreetMap has no boundary polygon for it. Use the name of a municipality, district or neighbourhood, e.g. 'Campina Grande, Paraíba, Brazil'.</source>
+        <translation>'{place}' foi encontrado, mas o OpenStreetMap não tem um polígono de limite para ele. Use o nome de um município, distrito ou bairro, ex.: 'Campina Grande, Paraíba, Brasil'.</translation>
+    </message>
+    <message>
         <source>1. Download road network (OSM)</source>
         <translation>1. Baixar malha viária (OSM)</translation>
     </message>
@@ -22,6 +30,10 @@
     <message>
         <source>4. Isochrones (reachable areas)</source>
         <translation>4. Isócronas (áreas de alcance)</translation>
+    </message>
+    <message>
+        <source>&lt;b&gt;{km:.2f} km&lt;/b&gt; | &lt;b&gt;{min:.1f} min&lt;/b&gt;</source>
+        <translation>&lt;b&gt;{km:.2f} km&lt;/b&gt; | &lt;b&gt;{min:.1f} min&lt;/b&gt;</translation>
     </message>
     <message>
         <source>&lt;b&gt;{layer}&lt;/b&gt; layer (directed graph written at download) — most reliable</source>
@@ -56,8 +68,36 @@
         <translation>SRC</translation>
     </message>
     <message>
+        <source>Calculate</source>
+        <translation>Calcular</translation>
+    </message>
+    <message>
+        <source>Calculating route…</source>
+        <translation>Calculando a rota…</translation>
+    </message>
+    <message>
         <source>Car — respects one-way streets</source>
         <translation>Carro — respeita mão e contramão</translation>
+    </message>
+    <message>
+        <source>Choose the road network GeoPackage first.</source>
+        <translation>Escolha primeiro o GeoPackage da malha viária.</translation>
+    </message>
+    <message>
+        <source>Clear</source>
+        <translation>Limpar</translation>
+    </message>
+    <message>
+        <source>Click origin and destination on the map to calculate a route, with pan and zoom free</source>
+        <translation>Clique a origem e o destino no mapa para calcular uma rota, com pan e zoom livres</translation>
+    </message>
+    <message>
+        <source>Click the DESTINATION on the map.</source>
+        <translation>Clique o DESTINO no mapa.</translation>
+    </message>
+    <message>
+        <source>Click the ORIGIN on the map. Drag to pan, wheel to zoom, right click or Esc to clear.</source>
+        <translation>Clique a ORIGEM no mapa. Arraste para mover, use a roda do mouse para zoom, botão direito ou Esc para limpar.</translation>
     </message>
     <message>
         <source>Computing reach: {label}</source>
@@ -70,6 +110,14 @@
     <message>
         <source>Could not open {path}</source>
         <translation>Não foi possível abrir {path}</translation>
+    </message>
+    <message>
+        <source>Could not open {path} as a GeoPackage.
+
+Details: {error}</source>
+        <translation>Não foi possível abrir {path} como GeoPackage.
+
+Detalhes: {error}</translation>
     </message>
     <message>
         <source>Could not overwrite {path}. Remove that file's layers from the project or choose another name.</source>
@@ -164,6 +212,10 @@ Detalhes: {error}</translation>
         <translation>Campo com o nome de cada ponto</translation>
     </message>
     <message>
+        <source>File not found: {path}</source>
+        <translation>Arquivo não encontrado: {path}</translation>
+    </message>
+    <message>
         <source>Filled</source>
         <translation>Preenchido</translation>
     </message>
@@ -192,6 +244,10 @@ Detalhes: {error}</translation>
         <translation>Linhas destacadas: atributos de custo / sentido.</translation>
     </message>
     <message>
+        <source>How to install</source>
+        <translation>Como instalar</translation>
+    </message>
+    <message>
         <source>Ignore one-way streets (comparison — allows wrong way)</source>
         <translation>Ignorar mão única (comparação — permite contramão)</translation>
     </message>
@@ -208,6 +264,10 @@ Detalhes: {error}</translation>
         <translation>Isócronas</translation>
     </message>
     <message>
+        <source>Keep previous routes</source>
+        <translation>Manter rotas anteriores</translation>
+    </message>
+    <message>
         <source>Layer</source>
         <translation>Camada</translation>
     </message>
@@ -220,24 +280,32 @@ Detalhes: {error}</translation>
         <translation>Metros em contramão</translation>
     </message>
     <message>
-        <source>Missing layers: {layers} — routing will not work.</source>
-        <translation>Camadas ausentes: {layers} — o roteamento não funcionará.</translation>
+        <source>Missing Python libraries: {modules}.</source>
+        <translation>Bibliotecas Python ausentes: {modules}.</translation>
     </message>
     <message>
-        <source>Missing library: {error}.
+        <source>Missing Python libraries: {modules}.
 
 Install OSMnx into QGIS's Python from the Python Console (Plugins &gt; Python Console), then restart QGIS:
 
 {code}
 
-On macOS/Linux use sys.executable instead of python.exe.</source>
-        <translation>Biblioteca ausente: {error}.
+If geopandas or networkx are also missing, run the same command without '--no-deps'.</source>
+        <translation>Bibliotecas Python ausentes: {modules}.
 
-Instale o OSMnx no Python do QGIS pelo Terminal Python (Complementos &gt; Terminal Python) e reinicie o QGIS:
+Instale o OSMnx no Python do QGIS pelo Console Python (Complementos &gt; Console Python) e reinicie o QGIS:
 
 {code}
 
-No macOS/Linux use sys.executable no lugar de python.exe.</translation>
+Se geopandas ou networkx também estiverem ausentes, rode o mesmo comando sem '--no-deps'.</translation>
+    </message>
+    <message>
+        <source>Missing layers: {layers} — routing will not work.</source>
+        <translation>Camadas ausentes: {layers} — o roteamento não funcionará.</translation>
+    </message>
+    <message>
+        <source>More than one road network in this GeoPackage ({layers}): keep a single network per GeoPackage.</source>
+        <translation>Mais de uma malha viária neste GeoPackage ({layers}): mantenha uma única malha por GeoPackage.</translation>
     </message>
     <message>
         <source>Network already loaded in this session (cache).</source>
@@ -248,8 +316,24 @@ No macOS/Linux use sys.executable no lugar de python.exe.</translation>
         <translation>Tipo de rede</translation>
     </message>
     <message>
+        <source>No '{type}' roads were found inside '{name}'. Try another network type or a larger place.</source>
+        <translation>Nenhuma via do tipo '{type}' foi encontrada em '{name}'. Tente outro tipo de rede ou um lugar maior.</translation>
+    </message>
+    <message>
+        <source>No CRS: EPSG:4326 will be assumed if the coordinates are lon/lat.</source>
+        <translation>Sem SRC: será assumido EPSG:4326 se as coordenadas forem lon/lat.</translation>
+    </message>
+    <message>
+        <source>No arc of {path} connects two of its nodes: the network cannot be used for routing.</source>
+        <translation>Nenhum arco de {path} liga dois de seus nós: a malha não pode ser usada para roteamento.</translation>
+    </message>
+    <message>
         <source>No path between the points (disconnected network).</source>
         <translation>Não existe caminho entre os pontos (rede desconectada).</translation>
+    </message>
+    <message>
+        <source>No point is near the road network (all are more than {km:g} km away). Check that the points and the GeoPackage cover the same area.</source>
+        <translation>Nenhum ponto está perto da malha viária (todos a mais de {km:g} km). Confira se os pontos e o GeoPackage cobrem a mesma área.</translation>
     </message>
     <message>
         <source>No result for '{place}'. Check the spelling and include state and country, e.g. 'Campina Grande, Paraíba, Brazil'.
@@ -270,6 +354,10 @@ Detalhes: {error}</translation>
     <message>
         <source>OSMnx Routing &amp; Isochrones — road network, one-way aware routing and isochrones</source>
         <translation>OSMnx Routing &amp; Isochrones — malha viária, rotas com mão e contramão e isócronas</translation>
+    </message>
+    <message>
+        <source>OSMnx route</source>
+        <translation>Rota OSMnx</translation>
     </message>
     <message>
         <source>One isochrone per point (unchecked = combined coverage)</source>
@@ -300,6 +388,10 @@ Detalhes: {error}</translation>
         <translation>Pedestres ignoram o sentido: saindo e chegando dão o mesmo resultado.</translation>
     </message>
     <message>
+        <source>Pick on map</source>
+        <translation>Escolher no mapa</translation>
+    </message>
+    <message>
         <source>Place name (as in OSM, with state and country)</source>
         <translation>Lugar (nome no OSM, com estado e país)</translation>
     </message>
@@ -308,12 +400,20 @@ Detalhes: {error}</translation>
         <translation>Ponto (clique no mapa)</translation>
     </message>
     <message>
+        <source>Point fid {fid} skipped: it could not be converted to WGS84.</source>
+        <translation>Ponto fid {fid} ignorado: não foi possível convertê-lo para WGS84.</translation>
+    </message>
+    <message>
         <source>Point layer (optional)</source>
         <translation>Camada de pontos (opcional)</translation>
     </message>
     <message>
         <source>Polygon method</source>
         <translation>Método do polígono</translation>
+    </message>
+    <message>
+        <source>Press 'Pick on map' to choose the points.</source>
+        <translation>Clique em 'Escolher no mapa' para marcar os pontos.</translation>
     </message>
     <message>
         <source>Profile</source>
@@ -348,6 +448,14 @@ Detalhes: {error}</translation>
         <translation>Rota</translation>
     </message>
     <message>
+        <source>Route ({profile}) {km:.2f} km</source>
+        <translation>Rota ({profile}) {km:.2f} km</translation>
+    </message>
+    <message>
+        <source>Route on the map (OSMnx)</source>
+        <translation>Rota no mapa (OSMnx)</translation>
+    </message>
+    <message>
         <source>Routing diagnosis</source>
         <translation>Diagnóstico para roteamento</translation>
     </message>
@@ -364,20 +472,78 @@ Detalhes: {error}</translation>
         <translation>Velocidade (maxspeed)</translation>
     </message>
     <message>
+        <source>Swap</source>
+        <translation>Inverter</translation>
+    </message>
+    <message>
         <source>The 'arcs' layer overlaps 'edges' on the map; switch it off if you prefer.</source>
         <translation>A camada 'arcs' sobrepõe 'edges' no mapa; desligue-a se preferir.</translation>
+    </message>
+    <message>
+        <source>The '{layer}' layer has no coordinate reference system (CRS). Assign one in QGIS (Layer Properties &gt; Source) or download the network again.</source>
+        <translation>A camada '{layer}' não tem sistema de referência de coordenadas (SRC). Defina um no QGIS (Propriedades da camada &gt; Fonte) ou baixe a malha novamente.</translation>
+    </message>
+    <message>
+        <source>The '{layer}' layer has no {fields} field(s): this does not look like a road network written by this plugin or by OSMnx.</source>
+        <translation>A camada '{layer}' não tem o(s) campo(s) {fields}: não parece uma malha viária gravada por este plugin ou pelo OSMnx.</translation>
     </message>
     <message>
         <source>The GeoPackage has no '{layer}' layer.</source>
         <translation>O GeoPackage não tem a camada '{layer}'.</translation>
     </message>
     <message>
+        <source>The OpenStreetMap server refused or could not complete the request (it is probably busy). Wait a few minutes and try again.
+
+Details: {error}</source>
+        <translation>O servidor do OpenStreetMap recusou ou não concluiu a requisição (provavelmente está sobrecarregado). Aguarde alguns minutos e tente novamente.
+
+Detalhes: {error}</translation>
+    </message>
+    <message>
+        <source>The OpenStreetMap server took too long to answer (timeout). It may be overloaded: try again in a few minutes, or use a smaller place.
+
+Details: {error}</source>
+        <translation>O servidor do OpenStreetMap demorou demais para responder (tempo esgotado). Ele pode estar sobrecarregado: tente novamente em alguns minutos ou use um lugar menor.
+
+Detalhes: {error}</translation>
+    </message>
+    <message>
+        <source>The destination</source>
+        <translation>O destino</translation>
+    </message>
+    <message>
         <source>The destination is {dist:.0f} m from the nearest network node.</source>
         <translation>O destino está a {dist:.0f} m do nó mais próximo da rede.</translation>
     </message>
     <message>
+        <source>The network was saved to a TEMPORARY file, deleted when QGIS closes: {path}
+To keep it, run again choosing an 'Output GeoPackage' file, or copy that file. Use the GeoPackage itself in the other algorithms (its layers already have the right names and CRS).</source>
+        <translation>A malha foi salva em um arquivo TEMPORÁRIO, apagado quando o QGIS fecha: {path}
+Para mantê-la, rode novamente escolhendo um arquivo em 'GeoPackage de saída', ou copie esse arquivo. Use o próprio GeoPackage nos outros algoritmos (as camadas já têm os nomes e o SRC corretos).</translation>
+    </message>
+    <message>
+        <source>The origin</source>
+        <translation>A origem</translation>
+    </message>
+    <message>
         <source>The origin is {dist:.0f} m from the nearest network node.</source>
         <translation>A origem está a {dist:.0f} m do nó mais próximo da rede.</translation>
+    </message>
+    <message>
+        <source>The point</source>
+        <translation>O ponto</translation>
+    </message>
+    <message>
+        <source>The point layer has no valid coordinate reference system (CRS). Set it in Layer Properties &gt; Source and run again.</source>
+        <translation>A camada de pontos não tem um sistema de referência de coordenadas (SRC) válido. Defina-o em Propriedades da camada &gt; Fonte e rode novamente.</translation>
+    </message>
+    <message>
+        <source>The road network in {path} is empty.</source>
+        <translation>A malha viária em {path} está vazia.</translation>
+    </message>
+    <message>
+        <source>The route could not be calculated.</source>
+        <translation>Não foi possível calcular a rota.</translation>
     </message>
     <message>
         <source>Time (min)</source>
@@ -400,6 +566,10 @@ Detalhes: {error}</translation>
         <translation>Unidade</translation>
     </message>
     <message>
+        <source>Using layers {nodes} and {edges}.</source>
+        <translation>Usando as camadas {nodes} e {edges}.</translation>
+    </message>
+    <message>
         <source>Using the proxy configured in QGIS.</source>
         <translation>Usando o proxy configurado no QGIS.</translation>
     </message>
@@ -410,6 +580,14 @@ Detalhes: {error}</translation>
     <message>
         <source>Warning: point '{label}' is {dist:.0f} m away from the network.</source>
         <translation>Atenção: o ponto '{label}' está a {dist:.0f} m da rede.</translation>
+    </message>
+    <message>
+        <source>Warning: point '{label}' skipped: {msg}</source>
+        <translation>Atenção: ponto '{label}' ignorado: {msg}</translation>
+    </message>
+    <message>
+        <source>Warning: the '{layer}' layer has no CRS; its coordinates look like longitude/latitude, so EPSG:4326 is assumed.</source>
+        <translation>Atenção: a camada '{layer}' não tem SRC; as coordenadas parecem longitude/latitude, então EPSG:4326 foi assumido.</translation>
     </message>
     <message>
         <source>Writing {path}</source>
@@ -434,6 +612,10 @@ Detalhes: {error}</translation>
     <message>
         <source>bike — cycling network</source>
         <translation>bike — rede para bicicletas</translation>
+    </message>
+    <message>
+        <source>car</source>
+        <translation>carro</translation>
     </message>
     <message>
         <source>clicked point</source>
@@ -476,6 +658,10 @@ Detalhes: {error}</translation>
         <translation>metros; custo do menor caminho</translation>
     </message>
     <message>
+        <source>pedestrian</source>
+        <translation>pedestre</translation>
+    </message>
+    <message>
         <source>rebuilt from 'edges' (from/to + oneway; {n:,} geometries re-oriented)</source>
         <translation>reconstrução a partir de 'edges' (from/to + oneway; {n:,} geometrias reorientadas)</translation>
     </message>
@@ -504,6 +690,10 @@ Detalhes: {error}</translation>
         <translation>{layer}: {crs}, {geom}, {n:,} feições, {fields} campos</translation>
     </message>
     <message>
+        <source>{m:.0f} m driven the wrong way</source>
+        <translation>{m:.0f} m na contramão</translation>
+    </message>
+    <message>
         <source>{nodes:,} nodes and {arcs:,} arcs</source>
         <translation>{nodes:,} nós e {arcs:,} arcos</translation>
     </message>
@@ -522,6 +712,14 @@ Detalhes: {error}</translation>
     <message>
         <source>{n} segment(s) driven the WRONG WAY: {m:.0f} m</source>
         <translation>{n} trecho(s) na CONTRAMÃO: {m:.0f} m</translation>
+    </message>
+    <message>
+        <source>{path} holds more than one road network ({layers}). Keep a single network per GeoPackage.</source>
+        <translation>{path} contém mais de uma malha viária ({layers}). Mantenha uma única malha por GeoPackage.</translation>
+    </message>
+    <message>
+        <source>{what} is {km:.1f} km from the road network. Is it inside the area of the GeoPackage?</source>
+        <translation>{what} está a {km:.1f} km da malha viária. Está dentro da área do GeoPackage?</translation>
     </message>
 </context>
 </TS>

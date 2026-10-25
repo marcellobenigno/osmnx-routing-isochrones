@@ -8,10 +8,10 @@ from qgis.core import (QgsProcessingParameterFile, QgsProcessingParameterFileDes
 
 from .base import AlgorithmBase
 from .compat import tr, WGS84, NO_GEOMETRY
+from .layers import AmbiguousLayers, find_network_layers
 
 COST_FIELDS = {"length", "maxspeed", "oneway", "highway", "lanes", "speed_kph",
                "travel_time", "from", "to", "u", "v", "key", "reversed", "direction", "mao"}
-ARC_LAYERS = ("arcs", "arcos")
 CSS = """<style>
 body{font-family:Segoe UI,Arial,sans-serif;margin:24px;color:#222;max-width:1100px}
 h1{font-size:22px} h2{font-size:17px;margin-top:28px;border-bottom:2px solid #ddd}
@@ -33,6 +33,7 @@ def _e(v):
 class InspectNetwork(AlgorithmBase):
     INPUT, OUTPUT = "INPUT", "OUTPUT"
     _name = "inspect_network"
+    _needs_core = False
 
     def displayName(self):
         return tr("2. Inspect road network GeoPackage")
@@ -51,7 +52,7 @@ class InspectNetwork(AlgorithmBase):
         self.addParameter(QgsProcessingParameterFileDestination(
             self.OUTPUT, tr("Report"), fileFilter="HTML (*.html)"))
 
-    def _layer(self, gpkg, name, feedback):
+    def _layer(self, gpkg, name, feedback, line_layers=()):
         lyr = QgsVectorLayer(f"{gpkg}|layername={name}", name, "ogr")
         if not lyr.isValid():
             return (f"<h2>{_e(name)}</h2><p class='warn'>{_e(tr('Invalid layer.'))}</p>", None)
@@ -82,6 +83,9 @@ class InspectNetwork(AlgorithmBase):
                                        f"lat {ew.yMinimum():.5f} … {ew.yMaximum():.5f}"))
         for k, v in rows:
             h.append(f"<tr><th>{_e(k)}</th><td>{_e(v)}</td></tr>")
+        if not crs.isValid():
+            note = tr("No CRS: EPSG:4326 will be assumed if the coordinates are lon/lat.")
+            h.append(f"<tr><th></th><td class='warn'>{_e(note)}</td></tr>")
         h.append(f"</table><table><tr><th>{_e(tr('Field'))}</th><th>{_e(tr('Type'))}</th>"
                  f"<th>{_e(tr('Filled'))}</th><th></th></tr>")
         for c in lyr.fields():
@@ -95,7 +99,7 @@ class InspectNetwork(AlgorithmBase):
         if oneway:
             h.append("<p><b>oneway:</b> " +
                      ", ".join(f"{_e(k)}: {n:,}" for k, n in oneway.most_common()) + "</p>")
-        if hwy and name in ("edges",) + ARC_LAYERS:
+        if hwy and name in line_layers:
             h.append(f"<table><tr><th>{_e(tr('highway (10 most common)'))}</th>"
                      f"<th>{_e(tr('segments'))}</th></tr>" +
                      "".join(f"<tr><td>{_e(k)}</td><td>{n:,}</td></tr>"
@@ -123,15 +127,22 @@ class InspectNetwork(AlgorithmBase):
         layers = [ds.GetLayer(i).GetName() for i in range(ds.GetLayerCount())]
         ds = None
 
+        try:
+            roles = find_network_layers(layers)
+            ambiguous = ""
+        except AmbiguousLayers as err:
+            roles, ambiguous = {}, str(err)
+        line_layers = tuple(roles[r] for r in ("edges", "arcs") if r in roles)
         parts, infos = [], {}
         for i, name in enumerate(layers):
             feedback.setProgress(100 * i / max(len(layers), 1))
-            body, info = self._layer(gpkg, name, feedback)
+            body, info = self._layer(gpkg, name, feedback, line_layers)
             parts.append(body)
             infos[name] = info
 
-        arc_layer = next((n for n in ARC_LAYERS if n in layers), None)
-        e = infos.get("edges") or (infos.get(arc_layer) if arc_layer else None)
+        arc_layer = roles.get("arcs")
+        edges = infos.get(roles["edges"]) if "edges" in roles else None
+        e = edges or (infos.get(arc_layer) if arc_layer else None)
         diag = [f"<h2>{_e(tr('Routing diagnosis'))}</h2><table>"]
         if e:
             def pct(c):
@@ -152,14 +163,18 @@ class InspectNetwork(AlgorithmBase):
         if arc_layer:
             source = tr("<b>{layer}</b> layer (directed graph written at download) — most "
                         "reliable").format(layer=arc_layer)
-        elif infos.get("edges") and {"from", "to"}.issubset(infos["edges"]["fields"]):
+        elif edges and {"from", "to"}.issubset(edges["fields"]):
             source = tr("rebuilt from <b>edges</b> (from/to + oneway)")
         else:
             source = tr("directed <b>edges</b> layer (u, v, key)")
         diag.append(f"<tr><th>{_e(tr('Direction source'))}</th><td colspan='2'>{source}</td>"
                     "</tr></table>")
-        missing = [c for c in ("nodes", "edges") if c not in layers]
-        if missing:
+        missing = [c for c in ("nodes", "edges") if c not in roles]
+        if ambiguous:
+            msg = tr("More than one road network in this GeoPackage ({layers}): keep a single "
+                     "network per GeoPackage.").format(layers=ambiguous)
+            diag.append(f"<p class='warn'>{_e(msg)}</p>")
+        elif missing:
             msg = tr("Missing layers: {layers} — routing will not work.").format(
                 layers=", ".join(missing))
             diag.append(f"<p class='warn'>{_e(msg)}</p>")
