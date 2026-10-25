@@ -15,7 +15,7 @@ A QGIS Processing plugin that downloads an OpenStreetMap street network to a Geo
 then computes **one-way aware** routes and **isochrones** locally, with no routing web service
 and no API key.
 
-![Car isochrones of 1, 2, 3 and 4 minutes](docs/assets/img/hero.png)
+![Car isochrones of 2, 4, 6 and 8 minutes in João Pessoa](docs/assets/img/hero.png)
 
 ## Features
 
@@ -26,7 +26,7 @@ and no API key.
 | **3. Shortest path (one-way aware)** | Car (directed graph; shortest or fastest) or pedestrian. An *ignore one-way* comparison flags the segments that would be driven the wrong way. |
 | **4. Isochrones (reachable areas)** | From a clicked point or a point layer (schools, clinics…); *from* or *to* the points; one per point or combined coverage; road band or concave hull; optional *reached roads* layer with arrival times. |
 
-Interface in English and Brazilian Portuguese (follows the QGIS language).
+Interface in English, Brazilian Portuguese and Spanish (follows the QGIS language).
 
 ## Installation
 

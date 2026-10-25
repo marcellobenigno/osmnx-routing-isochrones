@@ -217,6 +217,25 @@ def test_portuguese_translation_loads():
         s.setValue("locale/userLocale", old[1] or "")
 
 
+@pytest.mark.parametrize("locale", ["es", "es_AR"])
+def test_spanish_translation_loads(locale):
+    from qgis.PyQt.QtCore import QCoreApplication
+    from osmnx_routing_isochrones.osmnx_routing_isochrones import OsmnxRoutingPlugin
+    s = QgsSettings()
+    old = (s.value("locale/overrideFlag"), s.value("locale/userLocale"))
+    s.setValue("locale/overrideFlag", True)
+    s.setValue("locale/userLocale", locale)
+    try:
+        plugin = OsmnxRoutingPlugin(None)
+        assert plugin.translator is not None
+        alg = QgsApplication.processingRegistry().algorithmById("osmnx_routing:isochrones")
+        assert alg.displayName() == "4. Isócronas (áreas de alcance)"
+        QCoreApplication.removeTranslator(plugin.translator)
+    finally:
+        s.setValue("locale/overrideFlag", old[0] if old[0] is not None else False)
+        s.setValue("locale/userLocale", old[1] or "")
+
+
 def test_download_unreachable_server_gives_clear_message(tmp_path):
     """A dead QGIS proxy makes the request fail fast: the user must get a readable message
     (not a traceback) and the QGIS proxy must actually be used."""

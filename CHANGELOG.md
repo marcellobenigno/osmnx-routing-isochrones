@@ -17,6 +17,17 @@ Unreleased
 
 -->
 
+## Unreleased
+
+- Spanish translation of the interface (algorithms, dialogs, map panels and messages).
+- Documentation in Spanish shows the plugin in Spanish.
+- Shortest path help explains how points snap to the network (strongly connected component
+  for cars, connected component for pedestrians).
+- Documentation reviewed: conditional claims instead of promises, "which tool should I use?",
+  tested versions and an install check, "How it works" (assumptions, glossary), troubleshooting
+  with cause and action, localized Python examples and descriptive image texts.
+- Documentation figures redrawn on the road network of João Pessoa, with sharper screenshots.
+
 ## 0.1.0 - 2026-10-25
 
 - Initial development release.

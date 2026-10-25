@@ -34,7 +34,9 @@ class ShortestPath(AlgorithmBase):
             "<p><b>Ignore one-way</b> (comparison): allows driving against traffic and flags "
             "those segments (field <i>wrong_way</i>, dashed black), showing the error of an "
             "undirected graph.</p>"
-            "<p>Points snap to the nearest node of the largest connected component. For many "
+            "<p>Points snap to the nearest node of the largest strongly connected component "
+            "(car) or of the largest connected component (pedestrian), so a route always "
+            "exists; a point on an isolated street may snap some distance away. For many "
             "routes, use <i>Run as Batch Process</i>.</p>") + tr(
             "<p><b>Tip:</b> to click origin and destination with pan and zoom free, use "
             "<b>Route on the map (OSMnx)</b> on the Plugins toolbar or in Vector > OSMnx "
