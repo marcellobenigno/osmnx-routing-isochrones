@@ -54,9 +54,15 @@ experimental), or *Install from ZIP* with a file from the
    panel stays open while you click the **origin** and then the **destination** on the map;
    the route is calculated at once. Drag to pan and use the wheel to zoom between the
    clicks; right click or `Esc` clears; *Swap* reverses the route. Tick *Ignore one-way
-   streets* to see what an undirected graph would get wrong. The same calculation is the
-   **Shortest path** algorithm, for batch runs, models and scripts.
-4. **Isochrones**: choose a point (or a point layer), times `5, 10, 15`.
+   streets* to see what an undirected graph would get wrong.
+4. **Isochrones on the map**: same panel; every click adds a point and the isochrones are
+   recalculated (or untick *Calculate after each click* and press *Calculate*).
+
+Both panels take the road network GeoPackage from the layers already open in the project
+(the algorithm dialogs too), keep the clicks in a point layer (*Route points*,
+*Isochrone points*) and replace the previous result unless *Keep previous results* is
+ticked. The same calculations are the **Shortest path** and **Isochrones** algorithms, for
+batch runs, models and scripts.
 
 All algorithms work in *Run as Batch Process* and in the Graphical Modeler, and from Python:
 

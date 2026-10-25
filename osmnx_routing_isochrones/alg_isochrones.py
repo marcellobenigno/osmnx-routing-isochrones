@@ -10,7 +10,7 @@ from qgis.core import (QgsProcessingParameterFile, QgsProcessingParameterEnum,
                        QgsCsException, QgsProcessingMultiStepFeedback)
 
 from .base import (AlgorithmBase, import_core, apply_style, IsochroneStyle,
-                   ReachedRoadsStyle)
+                   ReachedRoadsStyle, project_network)
 from .compat import (tr, field, WGS84, NUMBER_DOUBLE, SOURCE_POINT, SOURCE_LINE,
                      SOURCE_POLYGON, WKB_LINESTRING, WKB_MULTIPOLYGON, FAST_INSERT)
 
@@ -46,7 +46,8 @@ class Isochrones(AlgorithmBase):
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFile(
-            self.NETWORK, tr("Road network GeoPackage"), extension="gpkg"))
+            self.NETWORK, tr("Road network GeoPackage"), extension="gpkg",
+            defaultValue=project_network()))      # network already open in the project
         self.addParameter(QgsProcessingParameterEnum(
             self.PROFILE, tr("Profile"),
             options=[tr("Car — respects one-way streets"),

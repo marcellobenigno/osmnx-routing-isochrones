@@ -1,8 +1,9 @@
 """
-Interactive route panel inside a headless (offscreen) QGIS: click vs drag on the map tool,
-origin -> destination -> route in a background task, swap, errors, plugin unload.
+Interactive map panels inside a headless (offscreen) QGIS: click vs drag on the map tool,
+route and isochrones in a background task, point layers of the clicks, network GeoPackage
+found in the project, plugin load / unload.
 
-    QT_QPA_PLATFORM=offscreen python -m pytest -v tests/test_route_tool.py
+    QT_QPA_PLATFORM=offscreen python -m pytest -v tests/test_map_tools.py
 """
 import time
 
@@ -15,7 +16,7 @@ from qgis.gui import QgsMapCanvas, QgsMapMouseEvent
 from qgis.PyQt.QtCore import QEvent, QPoint, Qt
 from qgis.PyQt.QtWidgets import QMainWindow
 
-from osmnx_routing_isochrones import route_tool as R
+from osmnx_routing_isochrones import map_tools as R
 
 network = T.network                     # session fixture: synthetic GeoPackage
 
@@ -78,39 +79,70 @@ def test_click_picks_and_drag_pans(canvas):
     assert cleared == [1]
 
 
-def test_panel_origin_destination_route(canvas, network):
+def click(panel, i, j):
+    lat, lon = S.latlon(i, j)
+    panel._picked(QgsPointXY(lon, lat))         # canvas in EPSG:4326
+
+
+def names(layer):
+    return [f["name"] for f in layer.getFeatures()]
+
+
+def remove(*ids):
+    for layer_id in ids:
+        if layer_id and QgsProject.instance().mapLayer(layer_id):
+            QgsProject.instance().removeMapLayer(layer_id)
+
+
+def test_route_panel_clicks_points_layer_and_route(canvas, network):
     panel = R.RoutePanel(canvas)
     panel.network.setFilePath(network)
     panel.pick.setChecked(True)
     assert canvas.mapTool() is panel.tool
-    lat, lon = S.latlon(2, 1)
-    panel.add_point(QgsPointXY(lon, lat))
-    assert panel.origin is not None and panel.destination is None
-    assert "DESTINATION" in panel.status.text()
-    lat, lon = S.latlon(2, 0)
-    panel.add_point(QgsPointXY(lon, lat))       # 2nd click runs the route
+    click(panel, 2, 1)
+    points = panel.points_layer(create=False)
+    assert names(points) == ["origin"] and "DESTINATION" in panel.status.text()
+    click(panel, 2, 0)                          # 2nd click runs the route
+    assert names(points) == ["origin", "destination"]
     wait(panel)
-    layer = QgsProject.instance().mapLayer(panel.last_layer_id)
-    assert layer is not None and layer.featureCount() >= 3
-    assert "0.33 km" in panel.result.text() and "0.33 km" in layer.name()
-    assert set(panel.markers) == {"o", "d"}
-    # swap: new route replaces the previous layer (Keep previous routes unchecked)
-    first = panel.last_layer_id
+    route = QgsProject.instance().mapLayer(panel.outputs[0])
+    assert route is not None and route.featureCount() >= 3
+    assert "0.33 km" in panel.result.text() and "0.33 km" in route.name()
+    # clicked points stay drawn above the route
+    root = QgsProject.instance().layerTreeRoot()
+    assert root.children()[0].layerId() == points.id()
+    # swap: the new route replaces the previous one (Keep previous results unchecked)
+    first = panel.outputs[0]
     panel.swap_points()
     wait(panel)
     assert QgsProject.instance().mapLayer(first) is None
     assert "0.11 km" in panel.result.text()
-    # 3rd click starts a new origin
-    lat, lon = S.latlon(5, 5)
-    panel.add_point(QgsPointXY(lon, lat))
-    assert panel.destination is None and set(panel.markers) == {"o"}
+    lon_first = next(points.getFeatures()).geometry().asPoint().x()
+    assert lon_first == pytest.approx(S.latlon(2, 0)[1])
+    click(panel, 5, 5)                          # 3rd click starts a new origin
+    assert names(points) == ["origin"]
     panel.clear()
-    assert panel.origin is None and not panel.markers
-    QgsProject.instance().removeMapLayer(panel.last_layer_id)
+    assert points.featureCount() == 0 and panel.points == []
+    remove(*panel.outputs, points.id())
     panel.cleanup()
 
 
-def test_panel_with_projected_canvas(canvas, network):
+def test_route_panel_keep_previous_results(canvas, network):
+    panel = R.RoutePanel(canvas)
+    panel.network.setFilePath(network)
+    panel.keep.setChecked(True)
+    click(panel, 2, 1)
+    click(panel, 2, 0)
+    wait(panel)
+    first = panel.outputs[0]
+    panel.swap_points()
+    wait(panel)
+    assert QgsProject.instance().mapLayer(first) is not None
+    remove(first, *panel.outputs, panel.points_layer_id)
+    panel.cleanup()
+
+
+def test_route_panel_with_projected_canvas(canvas, network):
     """Clicks in a projected map CRS are converted to WGS84 before routing."""
     from qgis.core import QgsCoordinateTransform
     utm = QgsCoordinateReferenceSystem("EPSG:31985")
@@ -121,37 +153,87 @@ def test_panel_with_projected_canvas(canvas, network):
     panel.network.setFilePath(network)
     for i, j in ((2, 1), (2, 0)):
         lat, lon = S.latlon(i, j)
-        panel.add_point(xf.transform(QgsPointXY(lon, lat)))
+        panel._picked(xf.transform(QgsPointXY(lon, lat)))
     assert panel.origin.y() == pytest.approx(S.latlon(2, 1)[0], abs=1e-6)
     wait(panel)
     assert "0.33 km" in panel.result.text()
-    QgsProject.instance().removeMapLayer(panel.last_layer_id)
+    remove(*panel.outputs, panel.points_layer_id)
     panel.cleanup()
 
 
-def test_panel_shows_errors(canvas, network, tmp_path):
+def test_route_panel_shows_errors(canvas, network, tmp_path):
     panel = R.RoutePanel(canvas)
     panel.network.setFilePath(str(tmp_path / "missing.gpkg"))
-    for i, j in ((2, 1), (2, 0)):
-        lat, lon = S.latlon(i, j)
-        panel.add_point(QgsPointXY(lon, lat))
+    click(panel, 2, 1)
+    click(panel, 2, 0)
     assert "GeoPackage" in panel.result.text() and panel.task is None
     panel.network.setFilePath(network)
-    panel.origin = QgsPointXY(S.LON0, S.LAT0 + 1.0)     # ~110 km away
+    panel.points[0] = ("origin", QgsPointXY(S.LON0, S.LAT0 + 1.0))     # ~110 km away
     panel.calculate()
     wait(panel)
     assert "km from the road network" in panel.result.text()
+    remove(panel.points_layer_id)
     panel.cleanup()
 
 
-def test_network_gpkg_found_in_project(network):
+def test_isochrone_panel(canvas, network):
+    panel = R.IsochronePanel(canvas)
+    panel.network.setFilePath(network)
+    panel.minutes.setText("0.5, 1")
+    panel.auto.setChecked(False)
+    click(panel, 2, 2)
+    click(panel, 5, 5)
+    points = panel.points_layer(create=False)
+    assert names(points) == ["P1", "P2"] and panel.count_label.text() == "2"
+    assert panel.task is None                   # 'Calculate after each click' unchecked
+    panel.separate.setChecked(True)
+    panel.calculate()
+    wait(panel)
+    iso = QgsProject.instance().mapLayer(panel.outputs[0])
+    roads = QgsProject.instance().mapLayer(panel.outputs[1])
+    assert iso.featureCount() == 4 and roads.featureCount() > 0
+    assert sorted({f["source"] for f in iso.getFeatures()}) == ["P1", "P2"]
+    assert "P1: 0.5 min" in panel.result.text()
+    # with auto on, the next click recalculates with all three points and replaces outputs
+    old = list(panel.outputs)
+    panel.auto.setChecked(True)
+    panel.roads.setChecked(False)
+    click(panel, 3, 6)
+    wait(panel)
+    assert all(QgsProject.instance().mapLayer(i) is None for i in old)
+    assert len(panel.outputs) == 1
+    iso = QgsProject.instance().mapLayer(panel.outputs[0])
+    assert {f["source"] for f in iso.getFeatures()} == {"P1", "P2", "P3"}
+    panel.clear()
+    assert points.featureCount() == 0 and panel.count_label.text() == "0"
+    assert not panel.run_button.isEnabled()
+    remove(*panel.outputs, points.id())
+    panel.cleanup()
+
+
+def test_network_found_in_project(network, tmp_path):
     from qgis.core import QgsVectorLayer
+    from osmnx_routing_isochrones.base import project_network, project_networks
+    other = tmp_path / "other.gpkg"
+    plain = QgsVectorLayer("Point?crs=EPSG:4326", "plain", "memory")
     lyr = QgsVectorLayer(f"{network}|layername=edges", "x_edges", "ogr")
-    QgsProject.instance().addMapLayer(lyr)
+    QgsProject.instance().addMapLayers([lyr, plain])
     try:
-        assert R.network_gpkg_in_project(QgsProject.instance()) == network
+        assert project_network() == network and project_networks() == [network]
+        # the algorithms' dialogs open with it, the panels pick it up
+        reg = QgsApplication.processingRegistry()
+        for alg_id, param in (("shortest_path", "NETWORK"), ("isochrones", "NETWORK"),
+                              ("inspect_network", "INPUT")):
+            alg = reg.createAlgorithmById(f"osmnx_routing:{alg_id}")
+            assert alg.parameterDefinition(param).defaultValue() == network
+        panel = R.RoutePanel(QgsMapCanvas())
+        panel.network.setFilePath(str(other))
+        panel.activate()
+        assert panel.network.filePath() == network
+        panel.cleanup()
     finally:
-        QgsProject.instance().removeMapLayer(lyr.id())
+        remove(lyr.id(), plain.id())
+    assert project_network() is None
 
 
 class FakeIface:
@@ -189,7 +271,7 @@ class FakeIface:
         self.docks.remove(w)
 
 
-def test_plugin_adds_and_removes_route_tool():
+def test_plugin_adds_and_removes_map_tools():
     from osmnx_routing_isochrones.osmnx_routing_isochrones import OsmnxRoutingPlugin
     iface = FakeIface()
     plugin = OsmnxRoutingPlugin(iface)
@@ -197,9 +279,13 @@ def test_plugin_adds_and_removes_route_tool():
     registry.removeProvider(T.PROVIDER)       # initGui registers its own provider
     try:
         plugin.initGui()
-        assert iface.toolbar and iface.menu and not iface.docks
-        plugin.action.trigger()
-        assert iface.docks and iface.map.mapTool() is plugin.panel.tool
+        assert len(iface.toolbar) == 2 and len(iface.menu) == 2 and not iface.docks
+        route_action, iso_action = plugin.actions
+        route_action.trigger()
+        assert iface.map.mapTool() is plugin.panels["route"].tool
+        iso_action.trigger()                    # switching panels switches the map tool
+        assert len(iface.docks) == 2 and iface.map.mapTool() is plugin.panels["isochrones"].tool
+        assert not plugin.panels["route"].pick.isChecked()
         plugin.unload()
         assert not iface.toolbar and not iface.menu and not iface.docks
         assert iface.map.mapTool() is None

@@ -26,8 +26,8 @@ class OsmnxRoutingPlugin:
         self.iface = iface
         self.provider = None
         self.translator = None
-        self.action = None
-        self.panel = None
+        self.actions = []
+        self.panels = {}
         self._load_translation()
 
     def _load_translation(self):
@@ -55,20 +55,30 @@ class OsmnxRoutingPlugin:
             from qgis.PyQt.QtGui import QAction         # Qt6
         except ImportError:
             from qgis.PyQt.QtWidgets import QAction     # Qt5
-        from .route_tool import icon
-        self.action = QAction(icon(), tr("Route on the map (OSMnx)"), self.iface.mainWindow())
-        self.action.setToolTip(tr("Click origin and destination on the map to calculate a "
-                                  "route, with pan and zoom free"))
-        self.action.triggered.connect(self.show_route_panel)
-        self.iface.addToolBarIcon(self.action)
-        self.iface.addPluginToVectorMenu(MENU, self.action)
+        from .map_tools import icon
+        for key, text, tip in (
+                ("route", tr("Route on the map (OSMnx)"),
+                 tr("Click origin and destination on the map to calculate a route, with pan "
+                    "and zoom free")),
+                ("isochrones", tr("Isochrones on the map (OSMnx)"),
+                 tr("Click points on the map to calculate isochrones, with pan and zoom "
+                    "free"))):
+            action = QAction(icon(), text, self.iface.mainWindow())
+            action.setToolTip(tip)
+            action.setObjectName(f"osmnx_{key}_action")
+            action.triggered.connect(lambda checked=False, k=key: self.show_panel(k))
+            self.iface.addToolBarIcon(action)
+            self.iface.addPluginToVectorMenu(MENU, action)
+            self.actions.append(action)
 
-    def show_route_panel(self):
-        if self.panel is None:
-            from .route_tool import RoutePanel, RIGHT_AREA
-            self.panel = RoutePanel(self.iface.mapCanvas(), self.iface.mainWindow())
-            self.iface.addDockWidget(RIGHT_AREA, self.panel)
-        self.panel.activate()
+    def show_panel(self, key):
+        """Opens the 'route' or 'isochrones' side panel and its map tool."""
+        if key not in self.panels:
+            from .map_tools import RoutePanel, IsochronePanel, RIGHT_AREA
+            cls = RoutePanel if key == "route" else IsochronePanel
+            self.panels[key] = cls(self.iface.mapCanvas(), self.iface.mainWindow())
+            self.iface.addDockWidget(RIGHT_AREA, self.panels[key])
+        self.panels[key].activate()
 
     def check_dependencies(self):
         """Warns once at start-up if OSMnx & co. are missing; the algorithms that need them
@@ -92,15 +102,15 @@ class OsmnxRoutingPlugin:
         return missing
 
     def unload(self):
-        if self.panel is not None:
-            self.panel.cleanup()
-            self.iface.removeDockWidget(self.panel)
-            self.panel.deleteLater()
-            self.panel = None
-        if self.action is not None:
-            self.iface.removeToolBarIcon(self.action)
-            self.iface.removePluginVectorMenu(MENU, self.action)
-            self.action = None
+        for panel in self.panels.values():
+            panel.cleanup()
+            self.iface.removeDockWidget(panel)
+            panel.deleteLater()
+        self.panels = {}
+        for action in self.actions:
+            self.iface.removeToolBarIcon(action)
+            self.iface.removePluginVectorMenu(MENU, action)
+        self.actions = []
         if self.provider:
             QgsApplication.processingRegistry().removeProvider(self.provider)
         if self.translator:

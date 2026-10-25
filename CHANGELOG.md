@@ -36,8 +36,11 @@ Unreleased
   without CRS and points outside the network; warning when the download is saved to a
   temporary file.
 - Step-by-step progress and cancellation in routing and isochrones.
-- *Route on the map* tool: side panel + map tool, origin/destination by clicking, free pan
-  and zoom between the clicks, route calculated in the background.
+- *Route on the map* and *Isochrones on the map* tools: side panel + map tool, points by
+  clicking (kept in a point layer), free pan and zoom between the clicks, calculated in the
+  background.
+- The road network GeoPackage is taken from the layers open in the project (panels and
+  algorithm dialogs).
 - Fixed: QGIS could crash on the 2nd background run of an algorithm (pyproj 3.7 freed its
   PROJ context while the reused worker thread still pointed to it).
 - Fixed: band isochrones failed with geopandas 1.1.

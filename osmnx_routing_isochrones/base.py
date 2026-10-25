@@ -8,10 +8,12 @@ from qgis.PyQt.QtGui import QColor, QIcon
 from qgis.core import (QgsProcessingAlgorithm, QgsProcessingException,
                        QgsProcessingLayerPostProcessorInterface, QgsVectorLayer, QgsSymbol,
                        QgsRendererCategory, QgsCategorizedSymbolRenderer,
-                       QgsGraduatedSymbolRenderer, QgsStyle, QgsClassificationEqualInterval)
+                       QgsGraduatedSymbolRenderer, QgsStyle, QgsClassificationEqualInterval,
+                       QgsProject)
 
 from .compat import tr
 from . import deps
+from .layers import AmbiguousLayers, find_network_layers
 
 FOLDER = os.path.dirname(__file__)
 
@@ -22,6 +24,38 @@ def install_message(missing):
               "the Python Console (Plugins > Python Console), then restart QGIS:\n\n{code}\n\n"
               "If geopandas or networkx are also missing, run the same command without "
               "'--no-deps'.").format(modules=", ".join(missing), code=deps.INSTALL_HELP)
+
+
+def _gpkg_has_network(path):
+    from osgeo import ogr
+    ds = ogr.Open(path)
+    if ds is None:
+        return False
+    names = [ds.GetLayer(i).GetName() for i in range(ds.GetLayerCount())]
+    ds = None
+    try:
+        roles = find_network_layers(names)
+    except AmbiguousLayers:
+        return False
+    return "nodes" in roles and "edges" in roles
+
+
+def project_networks(project=None):
+    """GeoPackages with a road network among the layers of the project, most recently added
+    first (fewer clicks: they become the default 'Road network GeoPackage')."""
+    project = project or QgsProject.instance()
+    found = []
+    for layer in reversed(list(project.mapLayers().values())):
+        path = layer.source().split("|")[0]
+        if (path.lower().endswith(".gpkg") and path not in found and os.path.isfile(path)
+                and _gpkg_has_network(path)):
+            found.append(path)
+    return found
+
+
+def project_network(project=None):
+    networks = project_networks(project)
+    return networks[0] if networks else None
 
 
 def import_core():

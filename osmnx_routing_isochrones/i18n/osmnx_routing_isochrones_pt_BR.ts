@@ -72,8 +72,12 @@
         <translation>Calcular</translation>
     </message>
     <message>
-        <source>Calculating route…</source>
-        <translation>Calculando a rota…</translation>
+        <source>Calculate after each click</source>
+        <translation>Calcular após cada clique</translation>
+    </message>
+    <message>
+        <source>Calculating…</source>
+        <translation>Calculando…</translation>
     </message>
     <message>
         <source>Car — respects one-way streets</source>
@@ -88,8 +92,16 @@
         <translation>Limpar</translation>
     </message>
     <message>
+        <source>Click one or more points on the map. Drag to pan, wheel to zoom, right click or Esc to clear.</source>
+        <translation>Clique um ou mais pontos no mapa. Arraste para mover, use a roda do mouse para zoom, botão direito ou Esc para limpar.</translation>
+    </message>
+    <message>
         <source>Click origin and destination on the map to calculate a route, with pan and zoom free</source>
         <translation>Clique a origem e o destino no mapa para calcular uma rota, com pan e zoom livres</translation>
+    </message>
+    <message>
+        <source>Click points on the map to calculate isochrones, with pan and zoom free</source>
+        <translation>Clique pontos no mapa para calcular isócronas, com pan e zoom livres</translation>
     </message>
     <message>
         <source>Click the DESTINATION on the map.</source>
@@ -260,12 +272,24 @@ Detalhes: {error}</translation>
         <translation>Tempos inválidos: '{text}'. Use, por exemplo, 5, 10, 15</translation>
     </message>
     <message>
+        <source>Isochrone points</source>
+        <translation>Pontos das isócronas</translation>
+    </message>
+    <message>
         <source>Isochrones</source>
         <translation>Isócronas</translation>
     </message>
     <message>
-        <source>Keep previous routes</source>
-        <translation>Manter rotas anteriores</translation>
+        <source>Isochrones ({profile}) {times} min</source>
+        <translation>Isócronas ({profile}) {times} min</translation>
+    </message>
+    <message>
+        <source>Isochrones on the map (OSMnx)</source>
+        <translation>Isócronas no mapa (OSMnx)</translation>
+    </message>
+    <message>
+        <source>Keep previous results</source>
+        <translation>Manter resultados anteriores</translation>
     </message>
     <message>
         <source>Layer</source>
@@ -356,6 +380,10 @@ Detalhes: {error}</translation>
         <translation>OSMnx Routing &amp; Isochrones — malha viária, rotas com mão e contramão e isócronas</translation>
     </message>
     <message>
+        <source>OSMnx isochrones</source>
+        <translation>Isócronas OSMnx</translation>
+    </message>
+    <message>
         <source>OSMnx route</source>
         <translation>Rota OSMnx</translation>
     </message>
@@ -408,6 +436,10 @@ Detalhes: {error}</translation>
         <translation>Camada de pontos (opcional)</translation>
     </message>
     <message>
+        <source>Points</source>
+        <translation>Pontos</translation>
+    </message>
+    <message>
         <source>Polygon method</source>
         <translation>Método do polígono</translation>
     </message>
@@ -422,6 +454,10 @@ Detalhes: {error}</translation>
     <message>
         <source>Reached roads</source>
         <translation>Vias alcançadas</translation>
+    </message>
+    <message>
+        <source>Reached roads ({profile})</source>
+        <translation>Vias alcançadas ({profile})</translation>
     </message>
     <message>
         <source>Reading nodes and edges...</source>
@@ -454,6 +490,10 @@ Detalhes: {error}</translation>
     <message>
         <source>Route on the map (OSMnx)</source>
         <translation>Rota no mapa (OSMnx)</translation>
+    </message>
+    <message>
+        <source>Route points</source>
+        <translation>Pontos da rota</translation>
     </message>
     <message>
         <source>Routing diagnosis</source>
@@ -508,6 +548,10 @@ Details: {error}</source>
 Detalhes: {error}</translation>
     </message>
     <message>
+        <source>The calculation failed.</source>
+        <translation>O cálculo falhou.</translation>
+    </message>
+    <message>
         <source>The destination</source>
         <translation>O destino</translation>
     </message>
@@ -540,10 +584,6 @@ Para mantê-la, rode novamente escolhendo um arquivo em 'GeoPackage de saída', 
     <message>
         <source>The road network in {path} is empty.</source>
         <translation>A malha viária em {path} está vazia.</translation>
-    </message>
-    <message>
-        <source>The route could not be calculated.</source>
-        <translation>Não foi possível calcular a rota.</translation>
     </message>
     <message>
         <source>Time (min)</source>
@@ -630,6 +670,10 @@ Para mantê-la, rode novamente escolhendo um arquivo em 'GeoPackage de saída', 
         <translation>graus (geográfico)</translation>
     </message>
     <message>
+        <source>destination</source>
+        <translation>destino</translation>
+    </message>
+    <message>
         <source>directed 'edges' layer</source>
         <translation>camada 'edges' dirigida</translation>
     </message>
@@ -656,6 +700,10 @@ Para mantê-la, rode novamente escolhendo um arquivo em 'GeoPackage de saída', 
     <message>
         <source>metres; cost of the shortest path</source>
         <translation>metros; custo do menor caminho</translation>
+    </message>
+    <message>
+        <source>origin</source>
+        <translation>origem</translation>
     </message>
     <message>
         <source>pedestrian</source>

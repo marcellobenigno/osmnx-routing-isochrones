@@ -5,7 +5,7 @@ from qgis.core import (QgsProcessingParameterFile, QgsProcessingParameterEnum,
                        QgsProcessingOutputNumber, QgsProcessingException, QgsFields,
                        QgsFeature, QgsGeometry, QgsProcessingMultiStepFeedback)
 
-from .base import AlgorithmBase, import_core, apply_style, RouteStyle
+from .base import AlgorithmBase, import_core, apply_style, RouteStyle, project_network
 from .compat import (tr, field, WGS84, NUMBER_DOUBLE, SOURCE_LINE, WKB_LINESTRING,
                      FAST_INSERT)
 
@@ -37,7 +37,8 @@ class ShortestPath(AlgorithmBase):
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFile(
-            self.NETWORK, tr("Road network GeoPackage"), extension="gpkg"))
+            self.NETWORK, tr("Road network GeoPackage"), extension="gpkg",
+            defaultValue=project_network()))      # network already open in the project
         self.addParameter(QgsProcessingParameterEnum(
             self.PROFILE, tr("Profile"),
             options=[tr("Car — respects one-way streets"),

@@ -6,7 +6,7 @@ from qgis.core import (QgsProcessingParameterFile, QgsProcessingParameterFileDes
                        QgsProcessingException, QgsVectorLayer, QgsWkbTypes,
                        QgsCoordinateTransform, QgsFeatureRequest, NULL)
 
-from .base import AlgorithmBase
+from .base import AlgorithmBase, project_network
 from .compat import tr, WGS84, NO_GEOMETRY
 from .layers import AmbiguousLayers, find_network_layers
 
@@ -48,7 +48,8 @@ class InspectNetwork(AlgorithmBase):
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFile(
-            self.INPUT, tr("Road network GeoPackage"), extension="gpkg"))
+            self.INPUT, tr("Road network GeoPackage"), extension="gpkg",
+            defaultValue=project_network()))      # network already open in the project
         self.addParameter(QgsProcessingParameterFileDestination(
             self.OUTPUT, tr("Report"), fileFilter="HTML (*.html)"))
 
