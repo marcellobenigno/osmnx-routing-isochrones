@@ -11,13 +11,23 @@
 <link rel="alternate" hreflang="en" href="../en/"><link rel="alternate" hreflang="pt-br" href="../pt-br/"><link rel="alternate" hreflang="es" href="../es/">
 <link rel="icon" href="../assets/icon.svg">
 <link rel="stylesheet" href="../assets/style.css">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>tailwind.config = { corePlugins: { preflight: false } };  // keep style.css base styles</script>
 </head>
 <body>
 <header class="topbar"><div class="wrap">
-  <a class="brand" href="#top"><img src="../assets/icon.svg" alt="">OSMnx Routing &amp; Isochrones</a>
-  <nav class="topnav"><a href="#overview">Visão geral</a><a href="#install">Instalação</a><a href="#quick-start">Primeiros passos</a><a href="#map-tools">Ferramentas</a><a href="#algorithms">Algoritmos</a><a href="#how-it-works">Como funciona</a><a href="#help">Ajuda</a><a href="#author">Autor</a></nav>
-  <div class="lang"><a href="../en/" data-lang="en" class="" hreflang="en" title="English">EN</a><a href="../pt-br/" data-lang="pt-br" class="on" hreflang="pt-br" title="Português">PT</a><a href="../es/" data-lang="es" class="" hreflang="es" title="Español">ES</a></div>
-</div></header>
+  <a class="brand min-w-0" href="#top"><img class="shrink-0" src="../assets/icon.svg" alt=""><span class="truncate">OSMnx Routing &amp; Isochrones</span></a>
+  <nav class="topnav hidden xl:flex items-center gap-4 ml-auto"><a href="#overview">Visão geral</a><a href="#install">Instalação</a><a href="#quick-start">Primeiros passos</a><a href="#map-tools">Ferramentas</a><a href="#algorithms">Algoritmos</a><a href="#how-it-works">Como funciona</a><a href="#help">Ajuda</a><a href="#author">Autor</a></nav>
+  <div class="lang shrink-0 ml-auto xl:ml-0"><a href="../en/" data-lang="en" class="" hreflang="en" title="English">EN</a><a href="../pt-br/" data-lang="pt-br" class="on" hreflang="pt-br" title="Português">PT</a><a href="../es/" data-lang="es" class="" hreflang="es" title="Español">ES</a></div>
+  <button class="menu-btn xl:hidden shrink-0" type="button" aria-controls="mobile-nav"
+    aria-expanded="false" aria-label="Menu">
+    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+</div>
+<nav id="mobile-nav" class="topnav mobile-nav hidden xl:hidden">
+  <div class="wrap flex flex-col py-2"><a href="#overview">Visão geral</a><a href="#install">Instalação</a><a href="#quick-start">Primeiros passos</a><a href="#map-tools">Ferramentas</a><a href="#algorithms">Algoritmos</a><a href="#how-it-works">Como funciona</a><a href="#help">Ajuda</a><a href="#author">Autor</a></div>
+</nav></header>
 
 <div class="hero" id="top"><div class="wrap">
   <div>
@@ -149,7 +159,7 @@ processing.runAndLoadResults(&quot;osmnx_routing:isochrones&quot;, {
     <div>
       <h2>Marcello Benigno</h2>
       <p class="role">Professor do Curso Superior de Tecnologia em Geoprocessamento do Instituto Federal da Paraíba (IFPB).</p>
-      <p>Marcello Benigno é mestre em Ciências Geodésicas e Tecnologias da Geoinformação pela UFPE e engenheiro civil pela UFCG. Atua há mais de 20 anos no ensino e no desenvolvimento de soluções geotecnológicas de código aberto.</p><p>Sua experiência inclui desenvolvimento Web GIS e automação espacial com Python — especialmente PyQGIS, OSMnx, NetworkX e Django —, modelagem de bancos de dados geográficos e arquiteturas em ambiente Linux. Esse trabalho orienta o desenvolvimento de ferramentas que integram análise espacial e geoprocessamento ao ecossistema QGIS.</p>
+      <p>Marcello Benigno é mestre em Ciências Geodésicas e Tecnologias da Geoinformação pela UFPE e engenheiro civil pela UFCG. Atua há mais de 20 anos no ensino e no desenvolvimento de soluções geotecnológicas de código aberto.</p><p>Sua experiência inclui desenvolvimento Web GIS e automação espacial com Python — especialmente PyQGIS, OSMnx, NetworkX e Django —, frontend de mapas web com Leaflet e Vue.js, modelagem de bancos de dados geográficos e arquiteturas em ambiente Linux. Esse trabalho orienta o desenvolvimento de ferramentas que integram análise espacial e geoprocessamento ao ecossistema QGIS.</p>
       <p class="links"><a class="chip" href="https://github.com/marcellobenigno">GitHub</a><a class="chip" href="https://linkedin.com/in/marcellobenigno">LinkedIn</a><a class="chip" href="mailto:marcello@ifpb.edu.br">E-mail</a></p>
     </div>
   </div>

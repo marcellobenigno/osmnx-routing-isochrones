@@ -1,4 +1,4 @@
-// Copy buttons, active section in the top menu, remembered language.
+// Copy buttons, menu button, active section in the top menu, remembered language.
 (function () {
   document.querySelectorAll("pre").forEach(function (pre) {
     var b = document.createElement("button");
@@ -22,15 +22,35 @@
     });
   });
 
+  // Menu button (small screens): opens the section list under the top bar
+  var btn = document.querySelector(".menu-btn");
+  var panel = document.getElementById("mobile-nav");
+  function setMenu(open) {
+    if (!btn || !panel) return;
+    panel.classList.toggle("hidden", !open);
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+  }
+  if (btn && panel) {
+    btn.addEventListener("click", function () { setMenu(panel.classList.contains("hidden")); });
+    panel.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () { setMenu(false); });
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") setMenu(false); });
+    window.matchMedia("(min-width: 1280px)").addEventListener("change", function () { setMenu(false); });
+  }
+
   var links = Array.prototype.slice.call(document.querySelectorAll(".topnav a"));
   if (!("IntersectionObserver" in window) || !links.length) return;
   var byId = {};
-  links.forEach(function (a) { byId[a.getAttribute("href").slice(1)] = a; });
+  links.forEach(function (a) {
+    var id = a.getAttribute("href").slice(1);
+    (byId[id] = byId[id] || []).push(a);
+  });
   var observer = new IntersectionObserver(function (entries) {
     entries.forEach(function (e) {
       if (e.isIntersecting && byId[e.target.id]) {
         links.forEach(function (a) { a.classList.remove("active"); });
-        byId[e.target.id].classList.add("active");
+        byId[e.target.id].forEach(function (a) { a.classList.add("active"); });
       }
     });
   }, { rootMargin: "-40% 0px -55% 0px" });
