@@ -55,7 +55,7 @@ class OsmnxRoutingPlugin:
             from qgis.PyQt.QtGui import QAction         # Qt6
         except ImportError:
             from qgis.PyQt.QtWidgets import QAction     # Qt5
-        from .map_tools import icon
+        from .base import icon
         for key, text, tip in (
                 ("route", tr("Route on the map (OSMnx)"),
                  tr("Click origin and destination on the map to calculate a route, with pan "
@@ -63,7 +63,7 @@ class OsmnxRoutingPlugin:
                 ("isochrones", tr("Isochrones on the map (OSMnx)"),
                  tr("Click points on the map to calculate isochrones, with pan and zoom "
                     "free"))):
-            action = QAction(icon(), text, self.iface.mainWindow())
+            action = QAction(icon(key), text, self.iface.mainWindow())
             action.setToolTip(tip)
             action.setObjectName(f"osmnx_{key}_action")
             action.triggered.connect(lambda checked=False, k=key: self.show_panel(k))

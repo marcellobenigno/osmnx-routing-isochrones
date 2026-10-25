@@ -26,6 +26,14 @@ def _null(v):
     return v is None or v == NULL or (isinstance(v, str) and not v.strip())
 
 
+def has_crs(crs):
+    """False for a missing CRS, also when GDAL reports it as the GeoPackage 'Undefined SRS'
+    (srs_id 0 / -1), which older QGIS versions treat as a valid custom CRS."""
+    if not crs.isValid():
+        return False
+    return bool(crs.authid()) or "undefined" not in crs.description().lower()
+
+
 def _e(v):
     return html.escape(str(v))
 
@@ -76,15 +84,15 @@ class InspectNetwork(AlgorithmBase):
 
         h = [f"<h2>{_e(tr('Layer'))}: {_e(name)}</h2><table>"]
         rows = ((tr("CRS"), f"{crs.authid()} — {crs.description()}"),
-                (tr("Units"), tr("degrees (geographic)") if crs.isGeographic()
-                 else tr("metres (projected)")),
+                (tr("Units"), "—" if not has_crs(crs) else
+                 tr("degrees (geographic)") if crs.isGeographic() else tr("metres (projected)")),
                 (tr("Geometry"), QgsWkbTypes.displayString(lyr.wkbType())),
                 (tr("Features"), f"{lyr.featureCount():,}"),
                 (tr("Extent (WGS84)"), f"lon {ew.xMinimum():.5f} … {ew.xMaximum():.5f} | "
                                        f"lat {ew.yMinimum():.5f} … {ew.yMaximum():.5f}"))
         for k, v in rows:
             h.append(f"<tr><th>{_e(k)}</th><td>{_e(v)}</td></tr>")
-        if not crs.isValid():
+        if not has_crs(crs):
             note = tr("No CRS: EPSG:4326 will be assumed if the coordinates are lon/lat.")
             h.append(f"<tr><th></th><td class='warn'>{_e(note)}</td></tr>")
         h.append(f"</table><table><tr><th>{_e(tr('Field'))}</th><th>{_e(tr('Type'))}</th>"

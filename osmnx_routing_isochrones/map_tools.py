@@ -13,19 +13,18 @@ algorithms run in a background task.
 import os
 
 from qgis.PyQt.QtCore import Qt, pyqtSignal
-from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QComboBox,
                                  QCheckBox, QPushButton, QLabel, QLineEdit)
 from qgis.core import (QgsApplication, QgsProject, QgsSettings, QgsCoordinateTransform,
                        QgsProcessingContext, QgsProcessingFeedback, QgsProcessingAlgRunnerTask,
                        QgsPointXY, QgsVectorLayer, QgsFeature, QgsGeometry,
-                       QgsRendererCategory, QgsCategorizedSymbolRenderer, QgsMarkerSymbol)
+                       QgsRendererCategory, QgsCategorizedSymbolRenderer)
 from qgis.gui import QgsMapTool, QgsDockWidget, QgsFileWidget
 
-from .base import RouteStyle, IsochroneStyle, ReachedRoadsStyle, project_networks
+from .base import (RouteStyle, IsochroneStyle, ReachedRoadsStyle, project_networks,
+                   point_symbol, icon)
 from .compat import tr, WGS84, _first
 
-FOLDER = os.path.dirname(__file__)
 SETTINGS = "osmnx_routing/map_tools/"
 CLICK_TOLERANCE_PX = 4                  # moved less than this between press and release = click
 LEFT = _first((Qt, "MouseButton", "LeftButton"), (Qt, "LeftButton"))
@@ -97,6 +96,7 @@ class PickPanel(QgsDockWidget):
     def __init__(self, title, canvas, parent=None):
         super().__init__(title, parent)
         self.setObjectName(f"Osmnx{self.KEY.capitalize()}Panel")
+        self.setWindowIcon(icon(self.KEY))
         self.canvas = canvas
         self.tool = PointPickTool(canvas)
         self.tool.picked.connect(self._picked)
@@ -342,11 +342,6 @@ class PickPanel(QgsDockWidget):
             self.canvas.unsetMapTool(self.tool)
 
 
-def _point_symbol(color):
-    return QgsMarkerSymbol.createSimple({"name": "circle", "color": color, "size": "3.4",
-                                         "outline_color": "white", "outline_width": "0.6"})
-
-
 # =============================================================================
 # Route
 # =============================================================================
@@ -377,8 +372,8 @@ class RoutePanel(PickPanel):
         return tr("Route points")
 
     def style_points(self, layer):
-        cats = [QgsRendererCategory(tr("origin"), _point_symbol("#1a9641"), tr("origin")),
-                QgsRendererCategory(tr("destination"), _point_symbol("#d7191c"),
+        cats = [QgsRendererCategory(tr("origin"), point_symbol("#1a9641"), tr("origin")),
+                QgsRendererCategory(tr("destination"), point_symbol("#d7191c"),
                                     tr("destination"))]
         layer.setRenderer(QgsCategorizedSymbolRenderer("name", cats))
 
@@ -435,7 +430,7 @@ class RoutePanel(PickPanel):
                 "CRITERION": self.criterion.currentIndex(),
                 "IGNORE_ONEWAY": self.ignore_oneway.isChecked(),
                 "ORIGIN": fmt(self.origin), "DESTINATION": fmt(self.destination),
-                "OUTPUT": "TEMPORARY_OUTPUT"}
+                "OUTPUT": "TEMPORARY_OUTPUT", "POINTS": None}     # the panel has its own
 
     def show_results(self, results):
         layer = self.context.takeResultLayer(results.get("OUTPUT", ""))
@@ -486,7 +481,7 @@ class IsochronePanel(PickPanel):
         return tr("Isochrone points")
 
     def style_points(self, layer):
-        layer.renderer().setSymbol(_point_symbol("#2b83ba"))
+        layer.renderer().setSymbol(point_symbol("#2b83ba"))
 
     def add_point(self, pt):
         self.points.append((f"P{len(self.points) + 1}", pt))
@@ -507,7 +502,8 @@ class IsochronePanel(PickPanel):
         params = {"PROFILE": self.profile.currentIndex(), "POINTS": self.points_layer().id(),
                   "ID_FIELD": "name", "SEPARATE": self.separate.isChecked(),
                   "DIRECTION": self.direction.currentIndex(), "MINUTES": self.minutes.text(),
-                  "METHOD": self.method.currentIndex(), "OUTPUT": "TEMPORARY_OUTPUT"}
+                  "METHOD": self.method.currentIndex(), "OUTPUT": "TEMPORARY_OUTPUT",
+                  "USED_POINTS": None}                              # the panel has its own
         params["ROADS"] = "TEMPORARY_OUTPUT" if self.roads.isChecked() else None
         return params
 
@@ -525,7 +521,3 @@ class IsochronePanel(PickPanel):
             self.add_output(roads, tr("Reached roads ({profile})").format(
                 profile=self.profile_name()), ReachedRoadsStyle)
         self.result.setText("<br>".join(lines))
-
-
-def icon():
-    return QIcon(os.path.join(FOLDER, "icons", "icon.png"))

@@ -332,6 +332,19 @@ def test_prefixed_layers_without_crs_work_in_qgis(network, tmp_path):
     assert "patos_arcs" in html and "Missing layers" not in html and "No CRS" in html
 
 
+def test_undefined_srs_counts_as_no_crs():
+    """Older GDAL (QGIS 3.34) reports a GeoPackage layer without CRS as a valid 'Undefined
+    SRS'; the inspection must still flag it."""
+    from qgis.core import QgsCoordinateReferenceSystem
+    from osmnx_routing_isochrones.alg_inspect import has_crs
+    assert has_crs(QgsCoordinateReferenceSystem("EPSG:4326"))
+    assert not has_crs(QgsCoordinateReferenceSystem())
+    undefined = QgsCoordinateReferenceSystem.fromWkt(
+        'LOCAL_CS["Undefined SRS",LOCAL_DATUM["unknown",32767],UNIT["unknown",0],'
+        'AXIS["Easting",EAST],AXIS["Northing",NORTH]]')
+    assert undefined.isValid() and not has_crs(undefined)
+
+
 def test_temporary_download_path_is_detected(tmp_path):
     from qgis.core import QgsProcessingUtils
     from osmnx_routing_isochrones.alg_download import is_temporary
@@ -361,6 +374,25 @@ def test_error_messages_in_portuguese(network, tmp_path):
         QCoreApplication.removeTranslator(plugin.translator)
         s.setValue("locale/overrideFlag", old[0] if old[0] is not None else False)
         s.setValue("locale/userLocale", old[1] or "")
+
+
+def test_dialogs_output_point_layers(network):
+    """Shortest path and isochrones also write the points used (origin/destination, or the
+    clicked / layer points), styled, when run from their dialogs."""
+    res, layers = run("shortest_path", {"NETWORK": network, "ORIGIN": pt(2, 1),
+                                        "DESTINATION": pt(2, 0)}, load=["OUTPUT", "POINTS"])
+    pts = layers["POINTS"]
+    assert [f["name"] for f in pts.getFeatures()] == ["origin", "destination"]
+    assert isinstance(pts.renderer(), QgsCategorizedSymbolRenderer)
+    first = next(pts.getFeatures()).geometry().asPoint()
+    assert (first.y(), first.x()) == pytest.approx(S.latlon(2, 1))
+    res, layers = run("isochrones", {"NETWORK": network, "POINT": pt(3, 3), "MINUTES": "1",
+                                     "ROADS": None}, load=["OUTPUT", "USED_POINTS"])
+    assert [f["name"] for f in layers["USED_POINTS"].getFeatures()] == ["clicked point"]
+    # not requested (e.g. from scripts or the map panels): no extra layer
+    res, _ = run("shortest_path", {"NETWORK": network, "ORIGIN": pt(2, 1),
+                                   "DESTINATION": pt(2, 0)})
+    assert "POINTS" not in res
 
 
 @pytest.mark.skipif(os.environ.get("OSMNX_ONLINE") != "1", reason="needs internet")

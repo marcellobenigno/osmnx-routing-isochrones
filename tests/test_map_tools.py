@@ -281,6 +281,10 @@ def test_plugin_adds_and_removes_map_tools():
         plugin.initGui()
         assert len(iface.toolbar) == 2 and len(iface.menu) == 2 and not iface.docks
         route_action, iso_action = plugin.actions
+        for action in plugin.actions:           # one icon per tool, all of the same family
+            assert not action.icon().isNull()
+        assert (route_action.icon().pixmap(24, 24).toImage()
+                != iso_action.icon().pixmap(24, 24).toImage())
         route_action.trigger()
         assert iface.map.mapTool() is plugin.panels["route"].tool
         iso_action.trigger()                    # switching panels switches the map tool

@@ -9,9 +9,10 @@ from qgis.core import (QgsProcessingAlgorithm, QgsProcessingException,
                        QgsProcessingLayerPostProcessorInterface, QgsVectorLayer, QgsSymbol,
                        QgsRendererCategory, QgsCategorizedSymbolRenderer,
                        QgsGraduatedSymbolRenderer, QgsStyle, QgsClassificationEqualInterval,
-                       QgsProject)
+                       QgsProject, QgsMarkerSymbol, QgsFields, QgsFeature, QgsGeometry,
+                       QgsPointXY)
 
-from .compat import tr
+from .compat import tr, field, WGS84, WKB_POINT, FAST_INSERT
 from . import deps
 from .layers import AmbiguousLayers, find_network_layers
 
@@ -72,8 +73,16 @@ def import_core():
     return core
 
 
+def icon(name="icon"):
+    """'icon' = plugin identity (manager, Processing group); 'route' / 'isochrones' = tools
+    of the same family (same palette and strokes)."""
+    svg = os.path.join(FOLDER, "icons", f"{name}.svg")
+    return QIcon(svg if os.path.exists(svg) else os.path.join(FOLDER, "icons", "icon.png"))
+
+
 class AlgorithmBase(QgsProcessingAlgorithm):
     _name = ""
+    _icon = "icon"
     _needs_core = True                  # False: runs with QGIS alone (no OSMnx needed)
 
     def tr(self, text):
@@ -97,7 +106,7 @@ class AlgorithmBase(QgsProcessingAlgorithm):
         return ""
 
     def icon(self):
-        return QIcon(os.path.join(FOLDER, "icons", "icon.png"))
+        return icon(self._icon)
 
 
 # =============================================================================
@@ -182,6 +191,55 @@ class RouteStyle(QgsProcessingLayerPostProcessorInterface):
     def create():
         RouteStyle.instance = RouteStyle()
         return RouteStyle.instance
+
+
+def point_symbol(color):
+    return QgsMarkerSymbol.createSimple({"name": "circle", "color": color, "size": "3.4",
+                                         "outline_color": "white", "outline_width": "0.6"})
+
+
+def style_points(layer):
+    """Origin green / destination red; any other point (isochrones) blue."""
+    names = {f["name"] for f in layer.getFeatures()} if layer.featureCount() < 1000 else set()
+    if names and names <= {tr("origin"), tr("destination")}:
+        cats = [QgsRendererCategory(tr("origin"), point_symbol("#1a9641"), tr("origin")),
+                QgsRendererCategory(tr("destination"), point_symbol("#d7191c"),
+                                    tr("destination"))]
+        layer.setRenderer(QgsCategorizedSymbolRenderer("name", cats))
+    else:
+        layer.renderer().setSymbol(point_symbol("#2b83ba"))
+
+
+class PointsStyle(QgsProcessingLayerPostProcessorInterface):
+    instance = None
+
+    def postProcessLayer(self, layer, context, feedback):
+        if isinstance(layer, QgsVectorLayer) and layer.fields().indexOf("name") >= 0:
+            style_points(layer)
+            layer.triggerRepaint()
+
+    @staticmethod
+    def create():
+        PointsStyle.instance = PointsStyle()
+        return PointsStyle.instance
+
+
+def write_points(alg, parameters, key, context, points):
+    """Optional point output with the points used: [(name, lat, lon)] in WGS84."""
+    if parameters.get(key) is None:
+        return None
+    fields = QgsFields()
+    fields.append(field("name", "str"))
+    sink, dest_id = alg.parameterAsSink(parameters, key, context, fields, WKB_POINT, WGS84)
+    if sink is None:
+        return None
+    for name, lat, lon in points:
+        f = QgsFeature(fields)
+        f.setGeometry(QgsGeometry.fromPointXY(QgsPointXY(lon, lat)))
+        f.setAttributes([str(name)])
+        sink.addFeature(f, FAST_INSERT)
+    apply_style(context, dest_id, PointsStyle.create)
+    return dest_id
 
 
 def apply_style(context, dest_id, factory):

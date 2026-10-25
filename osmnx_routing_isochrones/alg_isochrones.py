@@ -10,7 +10,7 @@ from qgis.core import (QgsProcessingParameterFile, QgsProcessingParameterEnum,
                        QgsCsException, QgsProcessingMultiStepFeedback)
 
 from .base import (AlgorithmBase, import_core, apply_style, IsochroneStyle,
-                   ReachedRoadsStyle, project_network)
+                   ReachedRoadsStyle, project_network, write_points)
 from .compat import (tr, field, WGS84, NUMBER_DOUBLE, SOURCE_POINT, SOURCE_LINE,
                      SOURCE_POLYGON, WKB_LINESTRING, WKB_MULTIPOLYGON, FAST_INSERT)
 
@@ -23,7 +23,9 @@ class Isochrones(AlgorithmBase):
     NETWORK, PROFILE, POINT, POINTS, ID_FIELD = "NETWORK", "PROFILE", "POINT", "POINTS", "ID_FIELD"
     SEPARATE, DIRECTION, MINUTES, METHOD = "SEPARATE", "DIRECTION", "MINUTES", "METHOD"
     BUFFER, WALK_SPEED, OUTPUT, ROADS = "BUFFER", "WALK_SPEED", "OUTPUT", "ROADS"
+    USED_POINTS = "USED_POINTS"
     _name = "isochrones"
+    _icon = "isochrones"
 
     def displayName(self):
         return tr("4. Isochrones (reachable areas)")
@@ -42,7 +44,10 @@ class Isochrones(AlgorithmBase):
             "<p><b>Method</b>: band around the reached roads (the last segment is cut in "
             "proportion to the remaining time) or concave hull of the reached nodes.</p>"
             "<p>Optional output <b>Reached roads</b>: each segment with its arrival time, "
-            "great for gradient maps.</p>")
+            "great for gradient maps.</p>") + tr(
+            "<p><b>Tip:</b> to click the points with pan and zoom free, use <b>Isochrones on "
+            "the map (OSMnx)</b> on the Plugins toolbar or in Vector > OSMnx Routing & "
+            "Isochrones.</p>")
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFile(
@@ -82,6 +87,9 @@ class Isochrones(AlgorithmBase):
             self.OUTPUT, tr("Isochrones"), SOURCE_POLYGON))
         self.addParameter(QgsProcessingParameterFeatureSink(
             self.ROADS, tr("Reached roads"), SOURCE_LINE, optional=True, createByDefault=True))
+        self.addParameter(QgsProcessingParameterFeatureSink(
+            self.USED_POINTS, tr("Isochrone points"), SOURCE_POINT, optional=True,
+            createByDefault=True))
 
     def _points(self, parameters, context, feedback):
         points = []
@@ -194,4 +202,7 @@ class Isochrones(AlgorithmBase):
                     sink_r.addFeature(f, FAST_INSERT)
                 result[self.ROADS] = roads_id
                 apply_style(context, roads_id, ReachedRoadsStyle.create)
+        points_id = write_points(self, parameters, self.USED_POINTS, context, points)
+        if points_id:
+            result[self.USED_POINTS] = points_id
         return result

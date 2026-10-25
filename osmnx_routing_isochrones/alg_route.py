@@ -5,8 +5,9 @@ from qgis.core import (QgsProcessingParameterFile, QgsProcessingParameterEnum,
                        QgsProcessingOutputNumber, QgsProcessingException, QgsFields,
                        QgsFeature, QgsGeometry, QgsProcessingMultiStepFeedback)
 
-from .base import AlgorithmBase, import_core, apply_style, RouteStyle, project_network
-from .compat import (tr, field, WGS84, NUMBER_DOUBLE, SOURCE_LINE, WKB_LINESTRING,
+from .base import (AlgorithmBase, import_core, apply_style, RouteStyle, project_network,
+                   write_points)
+from .compat import (tr, field, WGS84, NUMBER_DOUBLE, SOURCE_LINE, SOURCE_POINT, WKB_LINESTRING,
                      FAST_INSERT)
 
 PROFILES = ["drive", "walk"]
@@ -16,8 +17,9 @@ CRITERIA = ["distance", "time"]
 class ShortestPath(AlgorithmBase):
     NETWORK, PROFILE, CRITERION = "NETWORK", "PROFILE", "CRITERION"
     ORIGIN, DESTINATION, IGNORE_ONEWAY = "ORIGIN", "DESTINATION", "IGNORE_ONEWAY"
-    WALK_SPEED, OUTPUT = "WALK_SPEED", "OUTPUT"
+    WALK_SPEED, OUTPUT, POINTS = "WALK_SPEED", "OUTPUT", "POINTS"
     _name = "shortest_path"
+    _icon = "route"
 
     def displayName(self):
         return tr("3. Shortest path (one-way aware)")
@@ -33,7 +35,10 @@ class ShortestPath(AlgorithmBase):
             "those segments (field <i>wrong_way</i>, dashed black), showing the error of an "
             "undirected graph.</p>"
             "<p>Points snap to the nearest node of the largest connected component. For many "
-            "routes, use <i>Run as Batch Process</i>.</p>")
+            "routes, use <i>Run as Batch Process</i>.</p>") + tr(
+            "<p><b>Tip:</b> to click origin and destination with pan and zoom free, use "
+            "<b>Route on the map (OSMnx)</b> on the Plugins toolbar or in Vector > OSMnx "
+            "Routing & Isochrones.</p>")
 
     def initAlgorithm(self, config=None):
         self.addParameter(QgsProcessingParameterFile(
@@ -56,6 +61,9 @@ class ShortestPath(AlgorithmBase):
             minValue=1, maxValue=20))
         self.addParameter(QgsProcessingParameterFeatureSink(self.OUTPUT, tr("Route"),
                                                             SOURCE_LINE))
+        self.addParameter(QgsProcessingParameterFeatureSink(
+            self.POINTS, tr("Route points"), SOURCE_POINT, optional=True,
+            createByDefault=True))
         for name, desc in (("DISTANCE_KM", tr("Distance (km)")),
                            ("TIME_MIN", tr("Time (min)")),
                            ("WRONG_WAY_M", tr("Metres driven the wrong way"))):
@@ -130,5 +138,11 @@ class ShortestPath(AlgorithmBase):
             feedback.pushWarning(tr("The destination is {dist:.0f} m from the nearest network "
                                     "node.").format(dist=s["snap_dest_m"]))
         apply_style(context, dest_id, RouteStyle.create)
-        return {self.OUTPUT: dest_id, "DISTANCE_KM": s["km"], "TIME_MIN": s["min"],
-                "WRONG_WAY_M": s["wrong_m"]}
+        result = {self.OUTPUT: dest_id, "DISTANCE_KM": s["km"], "TIME_MIN": s["min"],
+                  "WRONG_WAY_M": s["wrong_m"]}
+        points_id = write_points(self, parameters, self.POINTS, context,
+                                 [(tr("origin"), po.y(), po.x()),
+                                  (tr("destination"), pd_.y(), pd_.x())])
+        if points_id:
+            result[self.POINTS] = points_id
+        return result

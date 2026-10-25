@@ -35,6 +35,7 @@ SOURCE_LINE = _first((Qgis, "ProcessingSourceType", "VectorLine"),
                      (QgsProcessing, "TypeVectorLine"))
 SOURCE_POLYGON = _first((Qgis, "ProcessingSourceType", "VectorPolygon"),
                         (QgsProcessing, "TypeVectorPolygon"))
+WKB_POINT = _first((Qgis, "WkbType", "Point"), (QgsWkbTypes, "Point"))
 WKB_LINESTRING = _first((Qgis, "WkbType", "LineString"), (QgsWkbTypes, "LineString"))
 WKB_MULTIPOLYGON = _first((Qgis, "WkbType", "MultiPolygon"), (QgsWkbTypes, "MultiPolygon"))
 FAST_INSERT = _first((QgsFeatureSink, "Flag", "FastInsert"), (QgsFeatureSink, "FastInsert"))
