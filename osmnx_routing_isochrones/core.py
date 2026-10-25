@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import os
 import ast
+import contextlib
 import threading
 from datetime import datetime
 from typing import Any
@@ -78,7 +79,7 @@ def keep_proj_context() -> None:
     time, so the 2nd run on a thread would use a freed context and crash QGIS (segfault).
     Holding the context manager per native thread keeps the pointer valid.
     """
-    try:
+    with contextlib.suppress(Exception):            # other pyproj versions: nothing to do
         import pyproj
         from pyproj import _context
         tid = threading.get_native_id()
@@ -88,8 +89,6 @@ def keep_proj_context() -> None:
         manager = _context.get_context_manager()
         if manager is not None:
             _PROJ_CONTEXTS[tid] = manager
-    except Exception:                               # other pyproj versions: nothing to do
-        pass
 
 
 class Canceled(Exception):

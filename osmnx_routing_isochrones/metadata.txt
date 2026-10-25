@@ -5,11 +5,12 @@ description=Network routing and isochrone generation powered by OSMnx
 about=Calculate routes and reachability isochrones using OpenStreetMap street network data via OSMnx.
     Four Processing algorithms: download a road network to a GeoPackage, inspect it, compute one-way aware shortest paths (car or pedestrian) and generate isochrones from points or point layers. Routing runs locally on the saved network, with no routing web service or API key.
     Requires the Python library osmnx installed in QGIS's Python (see the homepage for a one-line install). Interface in English, Brazilian Portuguese and Spanish. Data © OpenStreetMap contributors (ODbL).
-version=0.1.0
+version=0.1.1
 author=Marcello Benigno Borges de Barros Filho
 email=benigno.marcello@gmail.com
 
-changelog=0.1.0 - Initial development release.
+changelog=0.1.1 - Spanish interface; no silent try/except/pass (plugins.qgis.org security scan).
+    0.1.0 - Initial development release.
 
 tags=osm, osmnx, routing, isochrones, network, accessibility, analysis
 homepage=https://marcellobenigno.github.io/osmnx-routing-isochrones/

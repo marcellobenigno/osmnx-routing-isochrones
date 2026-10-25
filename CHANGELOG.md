@@ -17,8 +17,9 @@ Unreleased
 
 -->
 
-## Unreleased
+## 0.1.1 - 2026-10-25
 
+- No `try/except/pass` blocks (flagged by the plugins.qgis.org security scan); same behaviour.
 - Spanish translation of the interface (algorithms, dialogs, map panels and messages).
 - Documentation in Spanish shows the plugin in Spanish.
 - Shortest path help explains how points snap to the network (strongly connected component
