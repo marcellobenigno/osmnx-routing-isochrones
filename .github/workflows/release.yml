@@ -1,0 +1,41 @@
+name: Release
+
+# Push a tag such as 0.1.0 (same number as `version=` in metadata.txt) to:
+#   1. build the plugin ZIP and attach it to a GitHub release;
+#   2. upload it to plugins.qgis.org, if the OSGEO_USER / OSGEO_PASSWORD secrets exist
+#      (Settings > Secrets and variables > Actions).
+on:
+  push:
+    tags: ["*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install tools
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q qttools5-dev-tools
+          pip install qgis-plugin-ci
+      - name: Check that the tag matches metadata.txt
+        run: |
+          grep -q "^version=${GITHUB_REF_NAME}$" osmnx_routing_isochrones/metadata.txt \
+            || { echo "Tag ${GITHUB_REF_NAME} differs from version= in metadata.txt"; exit 1; }
+      - name: Translations complete and compile
+        run: python scripts/build_translations.py
+      - name: Release on GitHub (and plugins.qgis.org when credentials are set)
+        env:
+          OSGEO_USER: ${{ secrets.OSGEO_USER }}
+          OSGEO_PASSWORD: ${{ secrets.OSGEO_PASSWORD }}
+        run: |
+          ARGS="--github-token ${{ secrets.GITHUB_TOKEN }} --create-plugin-repo"
+          if [ -n "$OSGEO_USER" ]; then
+            ARGS="$ARGS --osgeo-username $OSGEO_USER --osgeo-password $OSGEO_PASSWORD"
+          fi
+          qgis-plugin-ci release "${GITHUB_REF_NAME}" $ARGS

@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint-and-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install tools
+        run: |
+          sudo apt-get update -q && sudo apt-get install -y -q qttools5-dev-tools
+          pip install flake8 pytest osmnx
+      - name: Lint
+        run: flake8 --max-line-length 110 osmnx_routing_isochrones scripts tests
+      - name: Translations complete and compile
+        run: python scripts/build_translations.py
+      - name: Core tests (no QGIS)
+        run: pytest -v tests/test_core.py
+
+  qgis:
+    # Real QGIS, headless. 'latest' tracks the newest release (Qt6 / QGIS 4 when available)
+    runs-on: ubuntu-latest
+    needs: lint-and-core
+    strategy:
+      fail-fast: false
+      matrix:
+        qgis: [release-3_34, ltr, latest]
+    continue-on-error: ${{ matrix.qgis == 'latest' }}
+    container:
+      image: qgis/qgis:${{ matrix.qgis }}
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install osmnx next to QGIS's own packages
+        run: |
+          python3 -m venv --system-site-packages /opt/venv
+          /opt/venv/bin/pip install -q osmnx pytest
+      - name: Algorithm tests in QGIS
+        run: /opt/venv/bin/python -m pytest -v tests

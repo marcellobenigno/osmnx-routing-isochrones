@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+env/
+.pytest_cache/
+
+# Qt / local builds (resources.py is not used by this plugin: icons are loaded from files)
+resources.py
+
+# Build output
+dist/
+*.zip
+
+# Editors
+.idea/
+.vscode/
