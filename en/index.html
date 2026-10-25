@@ -15,7 +15,7 @@
 <body>
 <header class="topbar"><div class="wrap">
   <a class="brand" href="#top"><img src="../assets/icon.svg" alt="">OSMnx Routing &amp; Isochrones</a>
-  <nav class="topnav"><a href="#overview">Overview</a><a href="#install">Install</a><a href="#quick-start">Quick start</a><a href="#map-tools">Map tools</a><a href="#algorithms">Algorithms</a><a href="#how-it-works">How it works</a><a href="#help">Help</a></nav>
+  <nav class="topnav"><a href="#overview">Overview</a><a href="#install">Install</a><a href="#quick-start">Quick start</a><a href="#map-tools">Map tools</a><a href="#algorithms">Algorithms</a><a href="#how-it-works">How it works</a><a href="#help">Help</a><a href="#author">Author</a></nav>
   <div class="lang"><a href="../en/" data-lang="en" class="on" hreflang="en" title="English">EN</a><a href="../pt-br/" data-lang="pt-br" class="" hreflang="pt-br" title="Português">PT</a><a href="../es/" data-lang="es" class="" hreflang="es" title="Español">ES</a></div>
 </div></header>
 
@@ -139,6 +139,20 @@ processing.runAndLoadResults(&quot;osmnx_routing:isochrones&quot;, {
   <p class="intro">Each entry gives the likely cause and what to do.</p>
   <details><summary>The algorithms are disabled, or “Missing Python libraries”</summary><div><p><b>Likely cause:</b> OSMnx (or another library) is not found in QGIS's Python.</p><p><b>What to do:</b> Follow the <a href='#install'>Install</a> steps, restart QGIS and run the verification code.</p></div></details><details><summary>“No result for …” or “no boundary polygon”</summary><div><p><b>Likely cause:</b> Nominatim did not find the place, or found it as a point or a line (a street, a point of interest).</p><p><b>What to do:</b> Write the name as in OpenStreetMap with state and country, and use a municipality, district or neighbourhood. Searching the name on openstreetmap.org shows what Nominatim finds.</p></div></details><details><summary>The download fails or times out</summary><div><p><b>Likely cause:</b> The area is large, the OSM servers are busy, the connection is slow or a proxy is required.</p><p><b>What to do:</b> Try again later or with a smaller place; check the proxy in <i>Settings → Options → Network</i>. Do not repeat the request in quick succession.</p></div></details><details><summary>“… km from the road network”</summary><div><p><b>Likely cause:</b> The point is more than 5 km from the network: outside the downloaded area, or in a layer whose CRS is wrong.</p><p><b>What to do:</b> Click inside the area of the GeoPackage, check the CRS of the point layer, or download a larger place.</p></div></details><details><summary>“Origin and destination snap to the same network node”</summary><div><p><b>Likely cause:</b> Both points attach to the same node (they are very close, or both lie on an isolated street).</p><p><b>What to do:</b> Pick points farther apart.</p></div></details><details><summary>The route takes an odd street or starts away from my click</summary><div><p><b>Likely cause:</b> The click attached to a node of the main network some distance away, or one-way tags are missing or wrong in OSM.</p><p><b>What to do:</b> Read the warnings in the log, look at the <code>arcs</code> layer around the point and, if the data is wrong, consider fixing it in OpenStreetMap and downloading again.</p></div></details><details><summary>Pedestrian isochrones look too small</summary><div><p><b>Likely cause:</b> The network was downloaded as <code>drive</code> and has no footpaths.</p><p><b>What to do:</b> Download the place again with <code>walk</code> or <code>all</code>.</p></div></details><details><summary>I saved the layers into another GeoPackage</summary><div><p><b>Likely cause:</b> Saving temporary layers may drop the CRS and add a prefix to the names.</p><p><b>What to do:</b> This works: prefixed names (<code>patos_nodes</code>…) are recognised and lon/lat layers without a CRS are taken as EPSG:4326 (the log says so). Keep one network per GeoPackage.</p></div></details>
   <div class="note tip"><b>Reporting a problem.</b> Open an <a href='https://github.com/marcellobenigno/osmnx-routing-isochrones/issues'>issue</a> with: the plugin version (Plugin Manager), the QGIS version and operating system (<i>Help → About</i>), the place and network type, and the full message from the panel, the <i>Log</i> tab of the dialog or <i>View → Panels → Log Messages</i>.</div>
+</div></section>
+
+<section id="author"><div class="wrap">
+  <p class="kicker k-green">About the author</p>
+  <div class="author">
+    <img src="../assets/img/author.jpg" alt="Photo of Marcello Benigno" width="200" height="200"
+      loading="lazy">
+    <div>
+      <h2>Marcello Benigno</h2>
+      <p class="role">Lecturer in the Geoprocessing Technology programme at the Federal Institute of Paraíba (IFPB), Brazil.</p>
+      <p>Marcello Benigno holds a master's degree in Geodetic Sciences and Geoinformation Technologies from UFPE and a degree in Civil Engineering from UFCG. For more than 20 years he has taught and developed open source geospatial solutions.</p><p>His work covers Web GIS development and spatial automation with Python — especially PyQGIS, OSMnx, NetworkX and Django —, geographic database modelling and Linux-based architectures. This experience guides the development of tools that bring spatial analysis and geoprocessing into the QGIS ecosystem.</p>
+      <p class="links"><a class="chip" href="https://github.com/marcellobenigno">GitHub</a><a class="chip" href="https://linkedin.com/in/marcellobenigno">LinkedIn</a><a class="chip" href="mailto:marcello@ifpb.edu.br">E-mail</a></p>
+    </div>
+  </div>
 </div></section>
 
 <footer><div class="wrap">

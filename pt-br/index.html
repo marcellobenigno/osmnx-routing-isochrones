@@ -15,7 +15,7 @@
 <body>
 <header class="topbar"><div class="wrap">
   <a class="brand" href="#top"><img src="../assets/icon.svg" alt="">OSMnx Routing &amp; Isochrones</a>
-  <nav class="topnav"><a href="#overview">Visão geral</a><a href="#install">Instalação</a><a href="#quick-start">Primeiros passos</a><a href="#map-tools">Ferramentas</a><a href="#algorithms">Algoritmos</a><a href="#how-it-works">Como funciona</a><a href="#help">Ajuda</a></nav>
+  <nav class="topnav"><a href="#overview">Visão geral</a><a href="#install">Instalação</a><a href="#quick-start">Primeiros passos</a><a href="#map-tools">Ferramentas</a><a href="#algorithms">Algoritmos</a><a href="#how-it-works">Como funciona</a><a href="#help">Ajuda</a><a href="#author">Autor</a></nav>
   <div class="lang"><a href="../en/" data-lang="en" class="" hreflang="en" title="English">EN</a><a href="../pt-br/" data-lang="pt-br" class="on" hreflang="pt-br" title="Português">PT</a><a href="../es/" data-lang="es" class="" hreflang="es" title="Español">ES</a></div>
 </div></header>
 
@@ -139,6 +139,20 @@ processing.runAndLoadResults(&quot;osmnx_routing:isochrones&quot;, {
   <p class="intro">Cada item traz a causa provável e o que fazer.</p>
   <details><summary>Os algoritmos estão desativados, ou “Bibliotecas Python ausentes”</summary><div><p><b>Causa provável:</b> O OSMnx (ou outra biblioteca) não é encontrado no Python do QGIS.</p><p><b>O que fazer:</b> Siga os passos da <a href='#install'>Instalação</a>, reinicie o QGIS e rode o código de verificação.</p></div></details><details><summary>“Nenhum resultado para …” ou “sem polígono de limite”</summary><div><p><b>Causa provável:</b> O Nominatim não encontrou o lugar, ou o encontrou como ponto ou linha (uma rua, um ponto de interesse).</p><p><b>O que fazer:</b> Escreva o nome como no OpenStreetMap, com estado e país, e use município, distrito ou bairro. Pesquisar o nome em openstreetmap.org mostra o que o Nominatim encontra.</p></div></details><details><summary>O download falha ou dá tempo esgotado</summary><div><p><b>Causa provável:</b> A área é grande, os servidores do OSM estão ocupados, a conexão está lenta ou é preciso um proxy.</p><p><b>O que fazer:</b> Tente mais tarde ou com um lugar menor; confira o proxy em <i>Configurações → Opções → Rede</i>. Não repita o pedido em sequência rápida.</p></div></details><details><summary>“… km da malha viária”</summary><div><p><b>Causa provável:</b> O ponto está a mais de 5 km da rede: fora da área baixada, ou numa camada com o SRC errado.</p><p><b>O que fazer:</b> Clique dentro da área do GeoPackage, confira o SRC da camada de pontos ou baixe um lugar maior.</p></div></details><details><summary>“Origem e destino caem no mesmo nó da rede”</summary><div><p><b>Causa provável:</b> Os dois pontos se ligam ao mesmo nó (estão muito próximos ou ambos numa rua isolada).</p><p><b>O que fazer:</b> Escolha pontos mais afastados.</p></div></details><details><summary>A rota usa uma rua estranha ou começa longe do clique</summary><div><p><b>Causa provável:</b> O clique foi ligado a um nó da rede principal a alguma distância, ou as etiquetas de mão única faltam ou estão erradas no OSM.</p><p><b>O que fazer:</b> Leia os avisos do log, observe a camada <code>arcs</code> perto do ponto e, se o dado estiver errado, considere corrigi-lo no OpenStreetMap e baixar de novo.</p></div></details><details><summary>As isócronas a pé parecem pequenas demais</summary><div><p><b>Causa provável:</b> A rede foi baixada como <code>drive</code> e não tem calçadas nem caminhos.</p><p><b>O que fazer:</b> Baixe o lugar de novo com <code>walk</code> ou <code>all</code>.</p></div></details><details><summary>Salvei as camadas em outro GeoPackage</summary><div><p><b>Causa provável:</b> Salvar camadas temporárias pode perder o SRC e acrescentar um prefixo aos nomes.</p><p><b>O que fazer:</b> Funciona: nomes com prefixo (<code>patos_nodes</code>…) são reconhecidos e camadas lon/lat sem SRC são tratadas como EPSG:4326 (o log avisa). Mantenha uma rede por GeoPackage.</p></div></details>
   <div class="note tip"><b>Como relatar um problema.</b> Abra uma <a href='https://github.com/marcellobenigno/osmnx-routing-isochrones/issues'>issue</a> com: a versão do plugin (Gerenciador de complementos), a versão do QGIS e o sistema operacional (<i>Ajuda → Sobre</i>), o lugar e o tipo de rede, e a mensagem completa do painel, da aba <i>Log</i> do diálogo ou de <i>Exibir → Painéis → Mensagens de log</i>.</div>
+</div></section>
+
+<section id="author"><div class="wrap">
+  <p class="kicker k-green">Sobre o autor</p>
+  <div class="author">
+    <img src="../assets/img/author.jpg" alt="Foto de Marcello Benigno" width="200" height="200"
+      loading="lazy">
+    <div>
+      <h2>Marcello Benigno</h2>
+      <p class="role">Professor do Curso Superior de Tecnologia em Geoprocessamento do Instituto Federal da Paraíba (IFPB).</p>
+      <p>Marcello Benigno é mestre em Ciências Geodésicas e Tecnologias da Geoinformação pela UFPE e engenheiro civil pela UFCG. Atua há mais de 20 anos no ensino e no desenvolvimento de soluções geotecnológicas de código aberto.</p><p>Sua experiência inclui desenvolvimento Web GIS e automação espacial com Python — especialmente PyQGIS, OSMnx, NetworkX e Django —, modelagem de bancos de dados geográficos e arquiteturas em ambiente Linux. Esse trabalho orienta o desenvolvimento de ferramentas que integram análise espacial e geoprocessamento ao ecossistema QGIS.</p>
+      <p class="links"><a class="chip" href="https://github.com/marcellobenigno">GitHub</a><a class="chip" href="https://linkedin.com/in/marcellobenigno">LinkedIn</a><a class="chip" href="mailto:marcello@ifpb.edu.br">E-mail</a></p>
+    </div>
+  </div>
 </div></section>
 
 <footer><div class="wrap">
