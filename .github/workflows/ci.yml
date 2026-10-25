@@ -7,10 +7,10 @@ on:
 
 jobs:
   lint-and-core:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04         # pinned: newer images may drop the Qt5 tools (lrelease)
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Install tools
@@ -19,12 +19,12 @@ jobs:
           pip install flake8 pytest osmnx
       - name: Lint
         run: flake8 --max-line-length 110 osmnx_routing_isochrones scripts tests
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.9"         # oldest Python shipped with QGIS 3.28
       - name: Syntax check on Python 3.9
         run: python -m compileall -q osmnx_routing_isochrones
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Translations complete and compile
@@ -34,7 +34,7 @@ jobs:
 
   qgis:
     # Real QGIS, headless. 'latest' tracks the newest release (Qt6 / QGIS 4 when available)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04         # pinned: newer images may drop the Qt5 tools (lrelease)
     needs: lint-and-core
     strategy:
       fail-fast: false
@@ -46,7 +46,7 @@ jobs:
     env:
       QT_QPA_PLATFORM: offscreen
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Install osmnx next to QGIS's own packages
         run: |
           # some images (e.g. release-3_34, Ubuntu 22.04) ship Python without ensurepip
