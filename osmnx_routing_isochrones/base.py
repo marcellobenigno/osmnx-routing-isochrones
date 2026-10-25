@@ -10,7 +10,7 @@ from qgis.core import (QgsProcessingAlgorithm, QgsProcessingException,
                        QgsRendererCategory, QgsCategorizedSymbolRenderer,
                        QgsGraduatedSymbolRenderer, QgsStyle, QgsClassificationEqualInterval,
                        QgsProject, QgsMarkerSymbol, QgsFields, QgsFeature, QgsGeometry,
-                       QgsPointXY)
+                       QgsPointXY, QgsGradientColorRamp, QgsGradientStop)
 
 from .compat import tr, field, WGS84, WKB_POINT, FAST_INSERT
 from . import deps
@@ -113,6 +113,23 @@ class AlgorithmBase(QgsProcessingAlgorithm):
 # Styles applied when an output layer is loaded into the project
 # (the post-processor must stay alive, so the instance is kept on the class)
 # =============================================================================
+RAMPS = {   # same colours as the QGIS ramps, used when the user's style library lacks them
+    "RdYlGn": ("#d7191c", "#fdae61", "#ffffbf", "#a6d96a", "#1a9641"),
+    "Spectral": ("#d7191c", "#fdae61", "#ffffbf", "#abdda4", "#2b83ba"),
+}
+
+
+def color_ramp(name):
+    """Colour ramp from the style library, or a built-in copy (styles never fall back to a
+    single colour because a ramp was renamed, deleted or not loaded)."""
+    ramp = QgsStyle.defaultStyle().colorRamp(name)
+    if ramp is not None:
+        return ramp
+    colors = [QColor(c) for c in RAMPS[name]]
+    stops = [QgsGradientStop(i / (len(colors) - 1), c) for i, c in enumerate(colors[1:-1], 1)]
+    return QgsGradientColorRamp(colors[0], colors[-1], False, stops)
+
+
 class IsochroneStyle(QgsProcessingLayerPostProcessorInterface):
     instance = None
 
@@ -123,12 +140,12 @@ class IsochroneStyle(QgsProcessingLayerPostProcessorInterface):
         if idx < 0:
             return
         values = sorted(v for v in layer.uniqueValues(idx) if v is not None)
-        ramp = QgsStyle.defaultStyle().colorRamp("RdYlGn")
+        ramp = color_ramp("RdYlGn")
         cats = []
         for i, v in enumerate(values):
             sym = QgsSymbol.defaultSymbol(layer.geometryType())
             pos = 1 - i / max(len(values) - 1, 1)          # near = green, far = red
-            sym.setColor(ramp.color(pos) if ramp else QColor("#3182bd"))
+            sym.setColor(ramp.color(pos))
             sym.setOpacity(0.55)
             sym.symbolLayer(0).setStrokeColor(QColor(60, 60, 60, 160))
             cats.append(QgsRendererCategory(v, sym, f"{v:g} min"))
@@ -147,15 +164,14 @@ class ReachedRoadsStyle(QgsProcessingLayerPostProcessorInterface):
     def postProcessLayer(self, layer, context, feedback):
         if not isinstance(layer, QgsVectorLayer) or layer.fields().indexOf("t_end_min") < 0:
             return
-        ramp = QgsStyle.defaultStyle().colorRamp("Spectral")
+        ramp = color_ramp("Spectral")
         r = QgsGraduatedSymbolRenderer("t_end_min")
         r.setClassificationMethod(QgsClassificationEqualInterval())
         sym = QgsSymbol.defaultSymbol(layer.geometryType())
         sym.setWidth(0.9)
         r.setSourceSymbol(sym)
-        if ramp:
-            ramp.invert()                                    # near = blue, far = red
-            r.setSourceColorRamp(ramp)
+        ramp.invert()                                        # near = blue, far = red
+        r.setSourceColorRamp(ramp)
         r.updateClasses(layer, 6)
         for i, rng in enumerate(r.ranges()):
             r.updateRangeLabel(i, f"{rng.lowerValue():.1f} – {rng.upperValue():.1f} min")

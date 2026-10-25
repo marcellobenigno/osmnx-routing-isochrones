@@ -6,14 +6,16 @@
 
 **Network routing and isochrone generation powered by [OSMnx](https://osmnx.readthedocs.io).**
 
+📖 **Documentation:** https://marcellobenigno.github.io/osmnx-routing-isochrones/
+([English](https://marcellobenigno.github.io/osmnx-routing-isochrones/en/) ·
+[Português](https://marcellobenigno.github.io/osmnx-routing-isochrones/pt-br/) ·
+[Español](https://marcellobenigno.github.io/osmnx-routing-isochrones/es/))
+
 A QGIS Processing plugin that downloads an OpenStreetMap street network to a GeoPackage and
 then computes **one-way aware** routes and **isochrones** locally, with no routing web service
 and no API key.
 
-<!-- Screenshots / GIFs: put them in docs/images/ and uncomment
-![Isochrones of schools](docs/images/isochrones.png)
-![Route avoiding a one-way street](docs/images/route.gif)
--->
+![Car isochrones of 1, 2, 3 and 4 minutes](docs/assets/img/hero.png)
 
 ## Features
 
@@ -125,3 +127,12 @@ plugins.qgis.org.
 [GPL-2.0-or-later](LICENSE). Map data © OpenStreetMap contributors, ODbL.
 
 Author: Marcello Benigno Borges de Barros Filho — Tecnologia em Geoprocessamento, IFPB (Brazil).
+
+## Documentation site
+
+The site in `docs/` is published with GitHub Pages. Figures are made by the plugin itself:
+
+```
+QT_QPA_PLATFORM=offscreen <QGIS python> scripts/build_docs_figures.py network.gpkg
+python scripts/build_docs.py          # docs/{en,pt-br,es}/index.html from one layout
+```

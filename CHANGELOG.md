@@ -44,4 +44,7 @@ Unreleased
 - Fixed: QGIS could crash on the 2nd background run of an algorithm (pyproj 3.7 freed its
   PROJ context while the reused worker thread still pointed to it).
 - Fixed: band isochrones failed with geopandas 1.1.
+- Isochrone and reached-roads colours no longer depend on the user's style library
+  (built-in copies of the RdYlGn / Spectral ramps).
+- Documentation site in English, Portuguese and Spanish (GitHub Pages), set as homepage.
 - English interface with Brazilian Portuguese translation.

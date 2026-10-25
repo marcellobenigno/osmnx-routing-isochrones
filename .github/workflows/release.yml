@@ -29,6 +29,16 @@ jobs:
             || { echo "Tag ${GITHUB_REF_NAME} differs from version= in metadata.txt"; exit 1; }
       - name: Translations complete and compile
         run: python scripts/build_translations.py
+      - name: Create the GitHub release (notes from CHANGELOG.md)
+        # qgis-plugin-ci only uploads to an existing release; kept if it already exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          awk -v v="$GITHUB_REF_NAME" '$0 ~ "^## " v " " {f=1; next} /^## /{f=0} f' \
+            CHANGELOG.md > notes.md
+          gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1 \
+            || gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" \
+                 --notes-file notes.md
       - name: Release on GitHub (and plugins.qgis.org when credentials are set)
         env:
           OSGEO_USER: ${{ secrets.OSGEO_USER }}

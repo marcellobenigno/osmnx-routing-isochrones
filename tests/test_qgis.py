@@ -332,6 +332,23 @@ def test_prefixed_layers_without_crs_work_in_qgis(network, tmp_path):
     assert "patos_arcs" in html and "Missing layers" not in html and "No CRS" in html
 
 
+def test_styles_have_colours_without_the_style_library(monkeypatch, network):
+    """Isochrones go from green (near) to red (far) even if the ramp is missing."""
+    from qgis.core import QgsStyle
+    from osmnx_routing_isochrones import base
+    for name in base.RAMPS:
+        ramp = base.color_ramp(name)
+        assert ramp.color(0).name() == "#d7191c"
+    monkeypatch.setattr(QgsStyle.defaultStyle(), "colorRamp", lambda name: None)
+    _, layers = run("isochrones", {"NETWORK": network, "POINT": pt(3, 3),
+                                   "MINUTES": "0.5, 1, 2"}, load=["OUTPUT", "ROADS"])
+    cats = layers["OUTPUT"].renderer().categories()
+    colors = {c.value(): c.symbol().color().name() for c in cats}
+    assert colors[0.5] == "#1a9641" and colors[2] == "#d7191c"
+    ranges = layers["ROADS"].renderer().ranges()
+    assert ranges[0].symbol().color().name() != ranges[-1].symbol().color().name()
+
+
 def test_undefined_srs_counts_as_no_crs():
     """Older GDAL (QGIS 3.34) reports a GeoPackage layer without CRS as a valid 'Undefined
     SRS'; the inspection must still flag it."""
