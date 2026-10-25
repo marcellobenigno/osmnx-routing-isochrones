@@ -11,6 +11,9 @@ Technical statements follow osmnx_routing_isochrones/core.py; update both togeth
 """
 
 REPO = "https://github.com/marcellobenigno/osmnx-routing-isochrones"
+AUTHOR_LINKS = (("GitHub", "https://github.com/marcellobenigno"),
+                ("LinkedIn", "https://linkedin.com/in/marcellobenigno"),
+                ("E-mail", "mailto:marcello@ifpb.edu.br"))
 
 INSTALL_CODE = """from pip._internal.cli.main import main as pip
 pip(["install", "--user", "--no-deps", "osmnx"])"""
@@ -96,7 +99,7 @@ TEXTS = {
                        "one-way aware routes and isochrones locally, without a routing API.",
         "copy": "Copy",
         "nav": ["Overview", "Install", "Quick start", "Map tools", "Algorithms",
-                "How it works", "Help"],
+                "How it works", "Help", "Author"],
         "hero_h1": "Routes and isochrones from OpenStreetMap, inside QGIS",
         "hero_lead": "Download the road network of a place once, save it as a GeoPackage, then "
                      "calculate routes that respect one-way streets and the areas reachable "
@@ -530,6 +533,18 @@ TEXTS = {
                   "About</i>), the place and network type, and the full message from the "
                   "panel, the <i>Log</i> tab of the dialog or <i>View → Panels → Log "
                   "Messages</i>.",
+        "author_k": "About the author", "author_h": "Marcello Benigno",
+        "author_role": "Lecturer in the Geoprocessing Technology programme at the Federal "
+                       "Institute of Paraíba (IFPB), Brazil.",
+        "author_bio": [
+            "Marcello Benigno holds a master's degree in Geodetic Sciences and Geoinformation "
+            "Technologies from UFPE and a degree in Civil Engineering from UFCG. For more than "
+            "20 years he has taught and developed open source geospatial solutions.",
+            "His work covers Web GIS development and spatial automation with Python — "
+            "especially PyQGIS, OSMnx, NetworkX and Django —, geographic database modelling "
+            "and Linux-based architectures. This experience guides the development of tools "
+            "that bring spatial analysis and geoprocessing into the QGIS ecosystem."],
+        "author_photo": "Photo of Marcello Benigno",
         "footer_data": "Map data © OpenStreetMap contributors (ODbL). Figures made with the "
                        "plugin on the network of João Pessoa, Paraíba, Brazil.",
         "footer_license": "Plugin licensed under GPL-2.0-or-later.",
@@ -542,7 +557,7 @@ TEXTS = {
                        "de roteamento.",
         "copy": "Copiar",
         "nav": ["Visão geral", "Instalação", "Primeiros passos", "Ferramentas", "Algoritmos",
-                "Como funciona", "Ajuda"],
+                "Como funciona", "Ajuda", "Autor"],
         "hero_h1": "Rotas e isócronas do OpenStreetMap, dentro do QGIS",
         "hero_lead": "Baixe uma vez a rede viária de um lugar, salve-a num GeoPackage e calcule "
                      "rotas que respeitam a mão das ruas e as áreas alcançáveis num dado "
@@ -982,6 +997,19 @@ TEXTS = {
                   "(<i>Ajuda → Sobre</i>), o lugar e o tipo de rede, e a mensagem completa do "
                   "painel, da aba <i>Log</i> do diálogo ou de <i>Exibir → Painéis → Mensagens "
                   "de log</i>.",
+        "author_k": "Sobre o autor", "author_h": "Marcello Benigno",
+        "author_role": "Professor do Curso Superior de Tecnologia em Geoprocessamento do "
+                       "Instituto Federal da Paraíba (IFPB).",
+        "author_bio": [
+            "Marcello Benigno é mestre em Ciências Geodésicas e Tecnologias da Geoinformação "
+            "pela UFPE e engenheiro civil pela UFCG. Atua há mais de 20 anos no ensino e no "
+            "desenvolvimento de soluções geotecnológicas de código aberto.",
+            "Sua experiência inclui desenvolvimento Web GIS e automação espacial com Python — "
+            "especialmente PyQGIS, OSMnx, NetworkX e Django —, modelagem de bancos de dados "
+            "geográficos e arquiteturas em ambiente Linux. Esse trabalho orienta o "
+            "desenvolvimento de ferramentas que integram análise espacial e geoprocessamento "
+            "ao ecossistema QGIS."],
+        "author_photo": "Foto de Marcello Benigno",
         "footer_data": "Dados © colaboradores do OpenStreetMap (ODbL). Figuras feitas com o "
                        "plugin sobre a rede de João Pessoa, Paraíba, Brasil.",
         "footer_license": "Plugin sob licença GPL-2.0-or-later.",
@@ -994,7 +1022,7 @@ TEXTS = {
                        "isócronas, sin API de ruteo.",
         "copy": "Copiar",
         "nav": ["Resumen", "Instalación", "Inicio rápido", "Herramientas", "Algoritmos",
-                "Cómo funciona", "Ayuda"],
+                "Cómo funciona", "Ayuda", "Autor"],
         "hero_h1": "Rutas e isócronas de OpenStreetMap, dentro de QGIS",
         "hero_lead": "Descarga una vez la red vial de un lugar, guárdala en un GeoPackage y "
                      "calcula rutas que respetan el sentido de las calles y las áreas "
@@ -1449,6 +1477,20 @@ TEXTS = {
                   "operativo (<i>Ayuda → Acerca de</i>), el lugar y el tipo de red, y el mensaje "
                   "completo del panel, de la pestaña <i>Registro</i> del diálogo o de <i>Ver → "
                   "Paneles → Mensajes de registro</i>.",
+        "author_k": "Sobre el autor", "author_h": "Marcello Benigno",
+        "author_role": "Profesor de la carrera de Tecnología en Geoprocesamiento del "
+                       "Instituto Federal de Paraíba (IFPB), Brasil.",
+        "author_bio": [
+            "Marcello Benigno es magíster en Ciencias Geodésicas y Tecnologías de la "
+            "Geoinformación por la UFPE e ingeniero civil por la UFCG. Desde hace más de 20 "
+            "años trabaja en la enseñanza y el desarrollo de soluciones geotecnológicas de "
+            "código abierto.",
+            "Su experiencia incluye desarrollo Web GIS y automatización espacial con Python — "
+            "especialmente PyQGIS, OSMnx, NetworkX y Django —, modelado de bases de datos "
+            "geográficas y arquitecturas en entornos Linux. Ese trabajo orienta el desarrollo "
+            "de herramientas que integran el análisis espacial y el geoprocesamiento al "
+            "ecosistema QGIS."],
+        "author_photo": "Foto de Marcello Benigno",
         "footer_data": "Datos © colaboradores de OpenStreetMap (ODbL). Figuras hechas con el "
                        "complemento sobre la red de João Pessoa, Paraíba, Brasil.",
         "footer_license": "Complemento con licencia GPL-2.0-or-later.",

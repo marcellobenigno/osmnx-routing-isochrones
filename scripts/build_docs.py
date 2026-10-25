@@ -10,7 +10,7 @@ scripts/build_docs_figures.py.
 import html
 import os
 
-from docs_texts import FIELDS, INSTALL_CODE, PYTHON_CODE, REPO, TEXTS, VERIFY_CODE
+from docs_texts import AUTHOR_LINKS, FIELDS, INSTALL_CODE, PYTHON_CODE, REPO, TEXTS, VERIFY_CODE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = os.path.join(ROOT, "docs")
@@ -18,7 +18,7 @@ LANGS = (("en", "English", "EN"), ("pt-br", "Português", "PT"), ("es", "Españo
 PANEL_SHOTS = {"en": "en", "pt-br": "pt", "es": "es"}     # plugin UI language of the shots
 
 SECTION_IDS = ["overview", "install", "quick-start", "map-tools", "algorithms",
-               "how-it-works", "help"]
+               "how-it-works", "help", "author"]
 
 
 def code(text):
@@ -144,6 +144,8 @@ def page(lang):
     roads_legend = (f'<span class="legend">{t["near"]} <span class="ramp roads"></span> '
                     f'{t["far"]}</span>')
 
+    links = "".join(f'<a class="chip" href="{u}">{n}</a>' for n, u in AUTHOR_LINKS)
+
     def alt(key):
         return html.escape(t[key])
 
@@ -265,6 +267,20 @@ def page(lang):
   <p class="intro">{t['faq_intro']}</p>
   {faq}
   <div class="note tip"><b>{t['report_h']}.</b> {t['report']}</div>
+</div></section>
+
+<section id="author"><div class="wrap">
+  <p class="kicker k-green">{t['author_k']}</p>
+  <div class="author">
+    <img src="{img}/author.jpg" alt="{alt('author_photo')}" width="200" height="200"
+      loading="lazy">
+    <div>
+      <h2>{t['author_h']}</h2>
+      <p class="role">{t['author_role']}</p>
+      {"".join(f"<p>{x}</p>" for x in t['author_bio'])}
+      <p class="links">{links}</p>
+    </div>
+  </div>
 </div></section>
 
 <footer><div class="wrap">

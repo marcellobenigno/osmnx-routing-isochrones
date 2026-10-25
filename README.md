@@ -126,13 +126,26 @@ plugins.qgis.org.
 
 [GPL-2.0-or-later](LICENSE). Map data © OpenStreetMap contributors, ODbL.
 
-Author: Marcello Benigno Borges de Barros Filho — Tecnologia em Geoprocessamento, IFPB (Brazil).
 
 ## Documentation site
 
 The site in `docs/` is published with GitHub Pages. Figures are made by the plugin itself:
 
 ```
-QT_QPA_PLATFORM=offscreen <QGIS python> scripts/build_docs_figures.py network.gpkg
+QT_QPA_PLATFORM=offscreen <QGIS python> scripts/build_docs_figures.py drive.gpkg [walk.gpkg]
 python scripts/build_docs.py          # docs/{en,pt-br,es}/index.html from one layout
 ```
+
+## About the author
+
+<img src="docs/assets/img/author.jpg" alt="Marcello Benigno" width="120" align="left">
+
+**Marcello Benigno** — lecturer in the Geoprocessing Technology programme at the Federal
+Institute of Paraíba (IFPB), Brazil. Master in Geodetic Sciences and Geoinformation
+Technologies (UFPE) and civil engineer (UFCG), with more than 20 years teaching and building
+open source geospatial solutions: Web GIS and spatial automation with Python (PyQGIS, OSMnx,
+NetworkX, Django), geographic database modelling and Linux-based architectures.
+
+[GitHub](https://github.com/marcellobenigno) ·
+[LinkedIn](https://linkedin.com/in/marcellobenigno) ·
+[E-mail](mailto:marcello@ifpb.edu.br)
