@@ -54,6 +54,15 @@ jobs:
             apt-get update -q && apt-get install -y -q python3-venv
             rm -rf /opt/venv && python3 -m venv --system-site-packages /opt/venv
           fi
-          /opt/venv/bin/pip install -q osmnx pytest
+          # keep numpy on the system's major version: QGIS's own scipy / GDAL bindings are
+          # built against it (Ubuntu 22.04 has numpy 1.21, osmnx would pull numpy 2)
+          NUMPY_MAJOR=$(python3 -c "import numpy; print(numpy.__version__.split('.')[0])")
+          /opt/venv/bin/pip install -q osmnx pytest "numpy<$((NUMPY_MAJOR + 1))"
+      - name: Check that the libraries import
+        run: |
+          /opt/venv/bin/python -c "import sys, numpy, geopandas, networkx, osmnx; \
+            print(sys.version.split()[0], 'numpy', numpy.__version__, 'geopandas', \
+                  geopandas.__version__, 'osmnx', osmnx.__version__)"
+          /opt/venv/bin/python -c "from osmnx_routing_isochrones import core"
       - name: Algorithm tests in QGIS
         run: /opt/venv/bin/python -m pytest -v tests
