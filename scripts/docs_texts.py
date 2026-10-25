@@ -97,7 +97,7 @@ TEXTS = {
         "title": "OSMnx Routing & Isochrones — QGIS plugin",
         "description": "QGIS plugin that downloads OpenStreetMap road networks and computes "
                        "one-way aware routes and isochrones locally, without a routing API.",
-        "copy": "Copy",
+        "copy": "Copy", "menu": "Menu",
         "nav": ["Overview", "Install", "Quick start", "Map tools", "Algorithms",
                 "How it works", "Help", "Author"],
         "hero_h1": "Routes and isochrones from OpenStreetMap, inside QGIS",
@@ -541,9 +541,10 @@ TEXTS = {
             "Technologies from UFPE and a degree in Civil Engineering from UFCG. For more than "
             "20 years he has taught and developed open source geospatial solutions.",
             "His work covers Web GIS development and spatial automation with Python — "
-            "especially PyQGIS, OSMnx, NetworkX and Django —, geographic database modelling "
-            "and Linux-based architectures. This experience guides the development of tools "
-            "that bring spatial analysis and geoprocessing into the QGIS ecosystem."],
+            "especially PyQGIS, OSMnx, NetworkX and Django —, web map front ends with "
+            "Leaflet and Vue.js, geographic database modelling and Linux-based architectures. "
+            "This experience guides the development of tools that bring spatial analysis and "
+            "geoprocessing into the QGIS ecosystem."],
         "author_photo": "Photo of Marcello Benigno",
         "footer_data": "Map data © OpenStreetMap contributors (ODbL). Figures made with the "
                        "plugin on the network of João Pessoa, Paraíba, Brazil.",
@@ -555,7 +556,7 @@ TEXTS = {
         "description": "Plugin do QGIS que baixa redes viárias do OpenStreetMap e calcula, "
                        "localmente, rotas que respeitam a mão das ruas e isócronas, sem API "
                        "de roteamento.",
-        "copy": "Copiar",
+        "copy": "Copiar", "menu": "Menu",
         "nav": ["Visão geral", "Instalação", "Primeiros passos", "Ferramentas", "Algoritmos",
                 "Como funciona", "Ajuda", "Autor"],
         "hero_h1": "Rotas e isócronas do OpenStreetMap, dentro do QGIS",
@@ -1005,8 +1006,9 @@ TEXTS = {
             "pela UFPE e engenheiro civil pela UFCG. Atua há mais de 20 anos no ensino e no "
             "desenvolvimento de soluções geotecnológicas de código aberto.",
             "Sua experiência inclui desenvolvimento Web GIS e automação espacial com Python — "
-            "especialmente PyQGIS, OSMnx, NetworkX e Django —, modelagem de bancos de dados "
-            "geográficos e arquiteturas em ambiente Linux. Esse trabalho orienta o "
+            "especialmente PyQGIS, OSMnx, NetworkX e Django —, frontend de mapas web com "
+            "Leaflet e Vue.js, modelagem de bancos de dados geográficos e arquiteturas em "
+            "ambiente Linux. Esse trabalho orienta o "
             "desenvolvimento de ferramentas que integram análise espacial e geoprocessamento "
             "ao ecossistema QGIS."],
         "author_photo": "Foto de Marcello Benigno",
@@ -1020,7 +1022,7 @@ TEXTS = {
         "description": "Complemento de QGIS que descarga redes viales de OpenStreetMap y "
                        "calcula localmente rutas que respetan el sentido de las calles e "
                        "isócronas, sin API de ruteo.",
-        "copy": "Copiar",
+        "copy": "Copiar", "menu": "Menú",
         "nav": ["Resumen", "Instalación", "Inicio rápido", "Herramientas", "Algoritmos",
                 "Cómo funciona", "Ayuda", "Autor"],
         "hero_h1": "Rutas e isócronas de OpenStreetMap, dentro de QGIS",
@@ -1486,8 +1488,9 @@ TEXTS = {
             "años trabaja en la enseñanza y el desarrollo de soluciones geotecnológicas de "
             "código abierto.",
             "Su experiencia incluye desarrollo Web GIS y automatización espacial con Python — "
-            "especialmente PyQGIS, OSMnx, NetworkX y Django —, modelado de bases de datos "
-            "geográficas y arquitecturas en entornos Linux. Ese trabajo orienta el desarrollo "
+            "especialmente PyQGIS, OSMnx, NetworkX y Django —, frontend de mapas web con "
+            "Leaflet y Vue.js, modelado de bases de datos geográficas y arquitecturas en "
+            "entornos Linux. Ese trabajo orienta el desarrollo "
             "de herramientas que integran el análisis espacial y el geoprocesamiento al "
             "ecosistema QGIS."],
         "author_photo": "Foto de Marcello Benigno",

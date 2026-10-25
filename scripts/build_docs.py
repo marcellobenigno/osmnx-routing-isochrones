@@ -162,13 +162,24 @@ def page(lang):
 {alternates}
 <link rel="icon" href="../assets/icon.svg">
 <link rel="stylesheet" href="../assets/style.css">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>tailwind.config = {{ corePlugins: {{ preflight: false }} }};  // keep style.css base styles</script>
 </head>
 <body>
 <header class="topbar"><div class="wrap">
-  <a class="brand" href="#top"><img src="../assets/icon.svg" alt="">OSMnx Routing &amp; Isochrones</a>
-  <nav class="topnav">{nav}</nav>
-  <div class="lang">{langs}</div>
-</div></header>
+  <a class="brand min-w-0" href="#top"><img class="shrink-0" src="../assets/icon.svg" alt="">\
+<span class="truncate">OSMnx Routing &amp; Isochrones</span></a>
+  <nav class="topnav hidden xl:flex items-center gap-4 ml-auto">{nav}</nav>
+  <div class="lang shrink-0 ml-auto xl:ml-0">{langs}</div>
+  <button class="menu-btn xl:hidden shrink-0" type="button" aria-controls="mobile-nav"
+    aria-expanded="false" aria-label="{t['menu']}">
+    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+</div>
+<nav id="mobile-nav" class="topnav mobile-nav hidden xl:hidden">
+  <div class="wrap flex flex-col py-2">{nav}</div>
+</nav></header>
 
 <div class="hero" id="top"><div class="wrap">
   <div>

@@ -11,13 +11,23 @@
 <link rel="alternate" hreflang="en" href="../en/"><link rel="alternate" hreflang="pt-br" href="../pt-br/"><link rel="alternate" hreflang="es" href="../es/">
 <link rel="icon" href="../assets/icon.svg">
 <link rel="stylesheet" href="../assets/style.css">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>tailwind.config = { corePlugins: { preflight: false } };  // keep style.css base styles</script>
 </head>
 <body>
 <header class="topbar"><div class="wrap">
-  <a class="brand" href="#top"><img src="../assets/icon.svg" alt="">OSMnx Routing &amp; Isochrones</a>
-  <nav class="topnav"><a href="#overview">Overview</a><a href="#install">Install</a><a href="#quick-start">Quick start</a><a href="#map-tools">Map tools</a><a href="#algorithms">Algorithms</a><a href="#how-it-works">How it works</a><a href="#help">Help</a><a href="#author">Author</a></nav>
-  <div class="lang"><a href="../en/" data-lang="en" class="on" hreflang="en" title="English">EN</a><a href="../pt-br/" data-lang="pt-br" class="" hreflang="pt-br" title="Português">PT</a><a href="../es/" data-lang="es" class="" hreflang="es" title="Español">ES</a></div>
-</div></header>
+  <a class="brand min-w-0" href="#top"><img class="shrink-0" src="../assets/icon.svg" alt=""><span class="truncate">OSMnx Routing &amp; Isochrones</span></a>
+  <nav class="topnav hidden xl:flex items-center gap-4 ml-auto"><a href="#overview">Overview</a><a href="#install">Install</a><a href="#quick-start">Quick start</a><a href="#map-tools">Map tools</a><a href="#algorithms">Algorithms</a><a href="#how-it-works">How it works</a><a href="#help">Help</a><a href="#author">Author</a></nav>
+  <div class="lang shrink-0 ml-auto xl:ml-0"><a href="../en/" data-lang="en" class="on" hreflang="en" title="English">EN</a><a href="../pt-br/" data-lang="pt-br" class="" hreflang="pt-br" title="Português">PT</a><a href="../es/" data-lang="es" class="" hreflang="es" title="Español">ES</a></div>
+  <button class="menu-btn xl:hidden shrink-0" type="button" aria-controls="mobile-nav"
+    aria-expanded="false" aria-label="Menu">
+    <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+</div>
+<nav id="mobile-nav" class="topnav mobile-nav hidden xl:hidden">
+  <div class="wrap flex flex-col py-2"><a href="#overview">Overview</a><a href="#install">Install</a><a href="#quick-start">Quick start</a><a href="#map-tools">Map tools</a><a href="#algorithms">Algorithms</a><a href="#how-it-works">How it works</a><a href="#help">Help</a><a href="#author">Author</a></div>
+</nav></header>
 
 <div class="hero" id="top"><div class="wrap">
   <div>
@@ -149,7 +159,7 @@ processing.runAndLoadResults(&quot;osmnx_routing:isochrones&quot;, {
     <div>
       <h2>Marcello Benigno</h2>
       <p class="role">Lecturer in the Geoprocessing Technology programme at the Federal Institute of Paraíba (IFPB), Brazil.</p>
-      <p>Marcello Benigno holds a master's degree in Geodetic Sciences and Geoinformation Technologies from UFPE and a degree in Civil Engineering from UFCG. For more than 20 years he has taught and developed open source geospatial solutions.</p><p>His work covers Web GIS development and spatial automation with Python — especially PyQGIS, OSMnx, NetworkX and Django —, geographic database modelling and Linux-based architectures. This experience guides the development of tools that bring spatial analysis and geoprocessing into the QGIS ecosystem.</p>
+      <p>Marcello Benigno holds a master's degree in Geodetic Sciences and Geoinformation Technologies from UFPE and a degree in Civil Engineering from UFCG. For more than 20 years he has taught and developed open source geospatial solutions.</p><p>His work covers Web GIS development and spatial automation with Python — especially PyQGIS, OSMnx, NetworkX and Django —, web map front ends with Leaflet and Vue.js, geographic database modelling and Linux-based architectures. This experience guides the development of tools that bring spatial analysis and geoprocessing into the QGIS ecosystem.</p>
       <p class="links"><a class="chip" href="https://github.com/marcellobenigno">GitHub</a><a class="chip" href="https://linkedin.com/in/marcellobenigno">LinkedIn</a><a class="chip" href="mailto:marcello@ifpb.edu.br">E-mail</a></p>
     </div>
   </div>

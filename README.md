@@ -144,7 +144,8 @@ python scripts/build_docs.py          # docs/{en,pt-br,es}/index.html from one l
 Institute of Paraíba (IFPB), Brazil. Master in Geodetic Sciences and Geoinformation
 Technologies (UFPE) and civil engineer (UFCG), with more than 20 years teaching and building
 open source geospatial solutions: Web GIS and spatial automation with Python (PyQGIS, OSMnx,
-NetworkX, Django), geographic database modelling and Linux-based architectures.
+NetworkX, Django), web map front ends with Leaflet and Vue.js, geographic database modelling
+and Linux-based architectures.
 
 [GitHub](https://github.com/marcellobenigno) ·
 [LinkedIn](https://linkedin.com/in/marcellobenigno) ·
