@@ -7,9 +7,6 @@
 **Network routing and isochrone generation powered by [OSMnx](https://osmnx.readthedocs.io).**
 
 📖 **Documentation:** https://marcellobenigno.github.io/osmnx-routing-isochrones/
-([English](https://marcellobenigno.github.io/osmnx-routing-isochrones/en/) ·
-[Português](https://marcellobenigno.github.io/osmnx-routing-isochrones/pt-br/) ·
-[Español](https://marcellobenigno.github.io/osmnx-routing-isochrones/es/))
 
 A QGIS Processing plugin that downloads an OpenStreetMap street network to a GeoPackage and
 then computes **one-way aware** routes and **isochrones** locally, with no routing web service
