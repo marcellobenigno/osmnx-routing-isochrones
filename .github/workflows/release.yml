@@ -2,9 +2,9 @@ name: Release
 
 # Push a tag such as 0.1.0 (same number as `version=` in metadata.txt) to:
 #   1. build the plugin ZIP and attach it to a GitHub release;
-#   2. upload it to plugins.qgis.org, if the QGIS_TOKEN secret (plugin token from the plugin's
-#      page on plugins.qgis.org) or the OSGEO_USER / OSGEO_PASSWORD secrets exist
-#      (Settings > Secrets and variables > Actions).
+#   2. upload it to plugins.qgis.org with the QGIS_TOKEN secret (plugin token from the plugin's
+#      page on plugins.qgis.org) or, if that is missing or fails, with the OSGEO_USER /
+#      OSGEO_PASSWORD secrets (Settings > Secrets and variables > Actions).
 on:
   push:
     tags: ["*.*.*"]
@@ -40,16 +40,14 @@ jobs:
           gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1 \
             || gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" \
                  --notes-file notes.md
-      - name: Release on GitHub (and plugins.qgis.org when credentials are set)
+      - name: Release on GitHub (ZIP and plugins.xml)
+        run: |
+          qgis-plugin-ci release "${GITHUB_REF_NAME}" \
+            --github-token ${{ secrets.GITHUB_TOKEN }} --create-plugin-repo
+      - name: Publish on plugins.qgis.org (token first, then OSGeo user name and password)
+        # qgis-plugin-ci refuses the token and the user name together, hence a separate step
         env:
           QGIS_TOKEN: ${{ secrets.QGIS_TOKEN }}
           OSGEO_USER: ${{ secrets.OSGEO_USER }}
           OSGEO_PASSWORD: ${{ secrets.OSGEO_PASSWORD }}
-        run: |
-          ARGS="--github-token ${{ secrets.GITHUB_TOKEN }} --create-plugin-repo"
-          if [ -n "$QGIS_TOKEN" ]; then
-            ARGS="$ARGS --qgis-token $QGIS_TOKEN"
-          elif [ -n "$OSGEO_USER" ]; then
-            ARGS="$ARGS --osgeo-username $OSGEO_USER --osgeo-password $OSGEO_PASSWORD"
-          fi
-          qgis-plugin-ci release "${GITHUB_REF_NAME}" $ARGS
+        run: python scripts/publish_plugin.py "osmnx_routing_isochrones.${GITHUB_REF_NAME}.zip"
