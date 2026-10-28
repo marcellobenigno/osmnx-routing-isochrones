@@ -2,6 +2,7 @@
 Builds the documentation site in docs/ (GitHub Pages): docs/<lang>/index.html for English,
 Brazilian Portuguese and Spanish from one layout, plus docs/index.html (language picker).
 docs/ is a worktree of the gh-pages branch: git worktree add docs gh-pages
+Code blocks are highlighted with Pygments (pip install pygments).
 
     python scripts/build_docs.py
 
@@ -10,6 +11,10 @@ scripts/build_docs_figures.py.
 """
 import html
 import os
+
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import PythonLexer
 
 from docs_texts import AUTHOR_LINKS, FIELDS, INSTALL_CODE, PYTHON_CODE, REPO, TEXTS, VERIFY_CODE
 
@@ -23,7 +28,9 @@ SECTION_IDS = ["overview", "install", "quick-start", "map-tools", "algorithms",
 
 
 def code(text):
-    return f"<pre><code>{html.escape(text)}</code></pre>"
+    """Python snippet highlighted at build time (token classes styled in style.css)."""
+    body = highlight(text, PythonLexer(), HtmlFormatter(nowrap=True)).rstrip("\n")
+    return f'<pre><code class="hl">{body}</code></pre>'
 
 
 def workflow_svg(w):
