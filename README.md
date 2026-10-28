@@ -12,7 +12,7 @@ A QGIS Processing plugin that downloads an OpenStreetMap street network to a Geo
 then computes **one-way aware** routes and **isochrones** locally, with no routing web service
 and no API key.
 
-![Car isochrones of 2, 4, 6 and 8 minutes in João Pessoa](docs/assets/img/hero.png)
+![Car isochrones of 2, 4, 6 and 8 minutes in João Pessoa](https://marcellobenigno.github.io/osmnx-routing-isochrones/assets/img/hero.png)
 
 ## Features
 
@@ -126,16 +126,19 @@ plugins.qgis.org.
 
 ## Documentation site
 
-The site in `docs/` is published with GitHub Pages. Figures are made by the plugin itself:
+The site lives in the `gh-pages` branch (published with GitHub Pages). Check it out in `docs/`
+(ignored by `main`), build, then commit and push from there. Figures are made by the plugin itself:
 
 ```
+git worktree add docs gh-pages
 QT_QPA_PLATFORM=offscreen <QGIS python> scripts/build_docs_figures.py drive.gpkg [walk.gpkg]
 python scripts/build_docs.py          # docs/{en,pt-br,es}/index.html from one layout
+cd docs && git add -A && git commit -m "Docs: ..." && git push
 ```
 
 ## About the author
 
-<img src="docs/assets/img/author.jpg" alt="Marcello Benigno" width="120" align="left">
+<img src="https://marcellobenigno.github.io/osmnx-routing-isochrones/assets/img/author.jpg" alt="Marcello Benigno" width="120" align="left">
 
 **Marcello Benigno** — lecturer in the Geoprocessing Technology programme at the Federal
 Institute of Paraíba (IFPB), Brazil. Master in Geodetic Sciences and Geoinformation

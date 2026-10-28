@@ -1,6 +1,7 @@
 """
 Builds the documentation site in docs/ (GitHub Pages): docs/<lang>/index.html for English,
 Brazilian Portuguese and Spanish from one layout, plus docs/index.html (language picker).
+docs/ is a worktree of the gh-pages branch: git worktree add docs gh-pages
 
     python scripts/build_docs.py
 
