@@ -295,7 +295,6 @@ def page(lang):
       loading="lazy">
     <div>
       <h2>{t['author_h']}</h2>
-      <p class="role">{t['author_role']}</p>
       {"".join(f"<p>{x}</p>" for x in t['author_bio'])}
       <p class="links">{links}</p>
     </div>

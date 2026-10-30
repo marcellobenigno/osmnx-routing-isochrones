@@ -534,8 +534,6 @@ TEXTS = {
                   "panel, the <i>Log</i> tab of the dialog or <i>View → Panels → Log "
                   "Messages</i>.",
         "author_k": "About the author", "author_h": "Marcello Benigno",
-        "author_role": "Lecturer in the Geoprocessing Technology programme at the Federal "
-                       "Institute of Paraíba (IFPB), Brazil.",
         "author_bio": [
             "He holds a master's degree in Geodetic Sciences and Geoinformation Technologies "
             "from the Federal University of Pernambuco (UFPE), a specialisation in Web "
@@ -1003,8 +1001,6 @@ TEXTS = {
                   "painel, da aba <i>Log</i> do diálogo ou de <i>Exibir → Painéis → Mensagens "
                   "de log</i>.",
         "author_k": "Sobre o autor", "author_h": "Marcello Benigno",
-        "author_role": "Professor do Curso Superior de Tecnologia em Geoprocessamento do "
-                       "Instituto Federal da Paraíba (IFPB).",
         "author_bio": [
             "É mestre em Ciências Geodésicas e Tecnologias da Geoinformação pela Universidade "
             "Federal de Pernambuco (UFPE), especialista em Programação para Web e engenheiro "
@@ -1486,8 +1482,6 @@ TEXTS = {
                   "completo del panel, de la pestaña <i>Registro</i> del diálogo o de <i>Ver → "
                   "Paneles → Mensajes de registro</i>.",
         "author_k": "Sobre el autor", "author_h": "Marcello Benigno",
-        "author_role": "Profesor de la carrera de Tecnología en Geoprocesamiento del "
-                       "Instituto Federal de Paraíba (IFPB), Brasil.",
         "author_bio": [
             "Es magíster en Ciencias Geodésicas y Tecnologías de la Geoinformación por la "
             "Universidad Federal de Pernambuco (UFPE), especialista en Programación para la "
