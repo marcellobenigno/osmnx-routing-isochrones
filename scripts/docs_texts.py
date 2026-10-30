@@ -537,14 +537,18 @@ TEXTS = {
         "author_role": "Lecturer in the Geoprocessing Technology programme at the Federal "
                        "Institute of Paraíba (IFPB), Brazil.",
         "author_bio": [
-            "Marcello Benigno holds a master's degree in Geodetic Sciences and Geoinformation "
-            "Technologies from UFPE and a degree in Civil Engineering from UFCG. For more than "
-            "20 years he has taught and developed open source geospatial solutions.",
-            "His work covers Web GIS development and spatial automation with Python — "
-            "especially PyQGIS, OSMnx, NetworkX and Django —, web map front ends with "
-            "Leaflet and Vue.js, geographic database modelling and Linux-based architectures. "
-            "This experience guides the development of tools that bring spatial analysis and "
-            "geoprocessing into the QGIS ecosystem."],
+            "He holds a master's degree in Geodetic Sciences and Geoinformation Technologies "
+            "from the Federal University of Pernambuco (UFPE), a specialisation in Web "
+            "Programming and a degree in Civil Engineering from the Federal University of "
+            "Campina Grande (UFCG).",
+            "A lecturer at the Federal Institute of Paraíba (IFPB) for more than 20 years, he "
+            "trains professionals in Geoprocessing and develops technological solutions for "
+            "the analysis and management of geospatial data.",
+            "He has experience developing Geographic Information Systems (GIS) and WebGIS "
+            "applications, designing and administering spatial databases, and automating "
+            "geoprocessing workflows. He works mainly with open source technologies, "
+            "integrating tools such as QGIS, PostgreSQL/PostGIS, GeoServer, Python and "
+            "JavaScript."],
         "author_photo": "Photo of Marcello Benigno",
         "footer_data": "Map data © OpenStreetMap contributors (ODbL). Figures made with the "
                        "plugin on the network of João Pessoa, Paraíba, Brazil.",
@@ -1002,15 +1006,17 @@ TEXTS = {
         "author_role": "Professor do Curso Superior de Tecnologia em Geoprocessamento do "
                        "Instituto Federal da Paraíba (IFPB).",
         "author_bio": [
-            "Marcello Benigno é mestre em Ciências Geodésicas e Tecnologias da Geoinformação "
-            "pela UFPE e engenheiro civil pela UFCG. Atua há mais de 20 anos no ensino e no "
-            "desenvolvimento de soluções geotecnológicas de código aberto.",
-            "Sua experiência inclui desenvolvimento Web GIS e automação espacial com Python — "
-            "especialmente PyQGIS, OSMnx, NetworkX e Django —, frontend de mapas web com "
-            "Leaflet e Vue.js, modelagem de bancos de dados geográficos e arquiteturas em "
-            "ambiente Linux. Esse trabalho orienta o "
-            "desenvolvimento de ferramentas que integram análise espacial e geoprocessamento "
-            "ao ecossistema QGIS."],
+            "É mestre em Ciências Geodésicas e Tecnologias da Geoinformação pela Universidade "
+            "Federal de Pernambuco (UFPE), especialista em Programação para Web e engenheiro "
+            "civil pela Universidade Federal de Campina Grande (UFCG).",
+            "Professor do Instituto Federal da Paraíba (IFPB) há mais de 20 anos, atua na "
+            "formação de profissionais em Geoprocessamento e no desenvolvimento de soluções "
+            "tecnológicas aplicadas à análise e à gestão de dados geoespaciais.",
+            "Possui experiência no desenvolvimento de Sistemas de Informação Geográfica (SIG) "
+            "e aplicações WebGIS, na arquitetura e administração de bancos de dados espaciais "
+            "e na automação de processos de geoprocessamento. Trabalha principalmente com "
+            "tecnologias de código aberto, integrando ferramentas como QGIS, "
+            "PostgreSQL/PostGIS, GeoServer, Python e JavaScript."],
         "author_photo": "Foto de Marcello Benigno",
         "footer_data": "Dados © colaboradores do OpenStreetMap (ODbL). Figuras feitas com o "
                        "plugin sobre a rede de João Pessoa, Paraíba, Brasil.",
@@ -1483,16 +1489,17 @@ TEXTS = {
         "author_role": "Profesor de la carrera de Tecnología en Geoprocesamiento del "
                        "Instituto Federal de Paraíba (IFPB), Brasil.",
         "author_bio": [
-            "Marcello Benigno es magíster en Ciencias Geodésicas y Tecnologías de la "
-            "Geoinformación por la UFPE e ingeniero civil por la UFCG. Desde hace más de 20 "
-            "años trabaja en la enseñanza y el desarrollo de soluciones geotecnológicas de "
-            "código abierto.",
-            "Su experiencia incluye desarrollo Web GIS y automatización espacial con Python — "
-            "especialmente PyQGIS, OSMnx, NetworkX y Django —, frontend de mapas web con "
-            "Leaflet y Vue.js, modelado de bases de datos geográficas y arquitecturas en "
-            "entornos Linux. Ese trabajo orienta el desarrollo "
-            "de herramientas que integran el análisis espacial y el geoprocesamiento al "
-            "ecosistema QGIS."],
+            "Es magíster en Ciencias Geodésicas y Tecnologías de la Geoinformación por la "
+            "Universidad Federal de Pernambuco (UFPE), especialista en Programación para la "
+            "Web e ingeniero civil por la Universidad Federal de Campina Grande (UFCG).",
+            "Profesor del Instituto Federal de Paraíba (IFPB) desde hace más de 20 años, se "
+            "dedica a la formación de profesionales en Geoprocesamiento y al desarrollo de "
+            "soluciones tecnológicas aplicadas al análisis y la gestión de datos geoespaciales.",
+            "Tiene experiencia en el desarrollo de Sistemas de Información Geográfica (SIG) y "
+            "aplicaciones WebGIS, en la arquitectura y administración de bases de datos "
+            "espaciales y en la automatización de procesos de geoprocesamiento. Trabaja "
+            "principalmente con tecnologías de código abierto e integra herramientas como "
+            "QGIS, PostgreSQL/PostGIS, GeoServer, Python y JavaScript."],
         "author_photo": "Foto de Marcello Benigno",
         "footer_data": "Datos © colaboradores de OpenStreetMap (ODbL). Figuras hechas con el "
                        "complemento sobre la red de João Pessoa, Paraíba, Brasil.",

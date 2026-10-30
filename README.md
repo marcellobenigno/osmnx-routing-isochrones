@@ -140,12 +140,14 @@ cd docs && git add -A && git commit -m "Docs: ..." && git push
 
 <img src="https://marcellobenigno.github.io/osmnx-routing-isochrones/assets/img/author.jpg" alt="Marcello Benigno" width="120" align="left">
 
-**Marcello Benigno** — lecturer in the Geoprocessing Technology programme at the Federal
-Institute of Paraíba (IFPB), Brazil. Master in Geodetic Sciences and Geoinformation
-Technologies (UFPE) and civil engineer (UFCG), with more than 20 years teaching and building
-open source geospatial solutions: Web GIS and spatial automation with Python (PyQGIS, OSMnx,
-NetworkX, Django), web map front ends with Leaflet and Vue.js, geographic database modelling
-and Linux-based architectures.
+**Marcello Benigno** — master in Geodetic Sciences and Geoinformation Technologies from the
+Federal University of Pernambuco (UFPE), specialist in Web Programming and civil engineer from
+the Federal University of Campina Grande (UFCG). A lecturer at the Federal Institute of Paraíba
+(IFPB) for more than 20 years, he trains professionals in Geoprocessing and develops
+technological solutions for the analysis and management of geospatial data. He has experience
+developing Geographic Information Systems (GIS) and WebGIS applications, designing and
+administering spatial databases, and automating geoprocessing workflows, working mainly with
+open source tools such as QGIS, PostgreSQL/PostGIS, GeoServer, Python and JavaScript.
 
 [GitHub](https://github.com/marcellobenigno) ·
 [LinkedIn](https://linkedin.com/in/marcellobenigno) ·
